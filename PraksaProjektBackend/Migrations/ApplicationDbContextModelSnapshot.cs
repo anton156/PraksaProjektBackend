@@ -47,6 +47,29 @@ namespace PraksaProjektBackend.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "b3383add-afff-4c1a-9468-f807bcb74057",
+                            ConcurrencyStamp = "1",
+                            Name = "Admin",
+                            NormalizedName = "Admin"
+                        },
+                        new
+                        {
+                            Id = "e89f0ce1-1e63-4344-8712-8a9df022c434",
+                            ConcurrencyStamp = "2",
+                            Name = "Customer",
+                            NormalizedName = "Customer"
+                        },
+                        new
+                        {
+                            Id = "f371b4fd-6836-4719-a8f8-b3258a75cb98",
+                            ConcurrencyStamp = "3",
+                            Name = "Organizer",
+                            NormalizedName = "Organizer"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -134,6 +157,13 @@ namespace PraksaProjektBackend.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "b74ddd14-6340-4840-95c2-db12554843e5",
+                            RoleId = "b3383add-afff-4c1a-9468-f807bcb74057"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -227,6 +257,25 @@ namespace PraksaProjektBackend.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "b74ddd14-6340-4840-95c2-db12554843e5",
+                            AccessFailedCount = 0,
+                            Address = "Mostarska",
+                            ConcurrencyStamp = "3f5149bb-0ef1-4f40-9365-56738f87ef34",
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = false,
+                            FirstName = "Administ",
+                            LastName = "Adi",
+                            LockoutEnabled = false,
+                            PhoneNumber = "1234567890",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "59550986-4191-46fc-bfd6-3562c7d7cc18",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

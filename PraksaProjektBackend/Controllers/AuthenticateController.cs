@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PraksaProjektBackend.Controllers
 {
@@ -79,10 +80,12 @@ namespace PraksaProjektBackend.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            
+            await _userManager.AddToRoleAsync(user, UserRoles.Customer);
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
-
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         [Route("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
@@ -94,6 +97,10 @@ namespace PraksaProjektBackend.Controllers
             ApplicationUser user = new()
             {
                 Email = model.Email,
+                FirstName = model.Firstname,
+                LastName = model.Lastname,
+                Address = model.Address,
+                PhoneNumber = model.PhoneNumber,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username
             };
@@ -101,25 +108,36 @@ namespace PraksaProjektBackend.Controllers
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Customer))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Customer));
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Organizer))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Organizer));
-
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
                 await _userManager.AddToRoleAsync(user, UserRoles.Admin);
-            }
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+
+            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPost]
+        [Route("register-organizer")]
+        public async Task<IActionResult> RegisterOrganizer([FromBody] RegisterModel model)
+        {
+            var userExists = await _userManager.FindByNameAsync(model.Username);
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+
+            ApplicationUser user = new()
             {
-                await _userManager.AddToRoleAsync(user, UserRoles.Customer);
-            }
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.Organizer);
-            }
+                Email = model.Email,
+                FirstName = model.Firstname,
+                LastName = model.Lastname,
+                Address = model.Address,
+                PhoneNumber = model.PhoneNumber,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.Username
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+
+            await _userManager.AddToRoleAsync(user, UserRoles.Organizer);
+
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 

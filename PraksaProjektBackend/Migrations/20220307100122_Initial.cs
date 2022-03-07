@@ -157,6 +157,26 @@ namespace PraksaProjektBackend.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "b3383add-afff-4c1a-9468-f807bcb74057", "1", "Admin", "Admin" },
+                    { "e89f0ce1-1e63-4344-8712-8a9df022c434", "2", "Customer", "Customer" },
+                    { "f371b4fd-6836-4719-a8f8-b3258a75cb98", "3", "Organizer", "Organizer" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "Mostarska", "3f5149bb-0ef1-4f40-9365-56738f87ef34", "admin@gmail.com", false, "Administ", "Adi", false, null, null, null, null, "1234567890", false, "59550986-4191-46fc-bfd6-3562c7d7cc18", false, "Admin" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "b3383add-afff-4c1a-9468-f807bcb74057", "b74ddd14-6340-4840-95c2-db12554843e5" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
