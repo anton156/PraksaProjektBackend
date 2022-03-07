@@ -170,7 +170,7 @@ namespace PraksaProjektBackend.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "Address", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "Mostarska", "3f5149bb-0ef1-4f40-9365-56738f87ef34", "admin@gmail.com", false, "Administ", "Adi", false, null, null, null, null, "1234567890", false, "59550986-4191-46fc-bfd6-3562c7d7cc18", false, "Admin" });
+                values: new object[] { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "Mostarska", "2f546439-86b5-49ec-a896-9635136640fb", "admin@gmail.com", true, "Administ", "Adi", false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAECBoeA8JE8gWiInRkGV9bx2FG8A37ETh3+BqTXdyGcWusHOFZAbuQ5ZDDjlSCp4+Qw==", "1234567890", true, "d92ba761-977e-4a78-aaea-cf5ef6828542", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

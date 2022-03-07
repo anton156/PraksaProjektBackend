@@ -12,7 +12,7 @@ using PraksaProjektBackend.Auth;
 namespace PraksaProjektBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220307100122_Initial")]
+    [Migration("20220307111011_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -266,15 +266,18 @@ namespace PraksaProjektBackend.Migrations
                             Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                             AccessFailedCount = 0,
                             Address = "Mostarska",
-                            ConcurrencyStamp = "3f5149bb-0ef1-4f40-9365-56738f87ef34",
+                            ConcurrencyStamp = "2f546439-86b5-49ec-a896-9635136640fb",
                             Email = "admin@gmail.com",
-                            EmailConfirmed = false,
+                            EmailConfirmed = true,
                             FirstName = "Administ",
                             LastName = "Adi",
                             LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GMAIL.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAECBoeA8JE8gWiInRkGV9bx2FG8A37ETh3+BqTXdyGcWusHOFZAbuQ5ZDDjlSCp4+Qw==",
                             PhoneNumber = "1234567890",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "59550986-4191-46fc-bfd6-3562c7d7cc18",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "d92ba761-977e-4a78-aaea-cf5ef6828542",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });

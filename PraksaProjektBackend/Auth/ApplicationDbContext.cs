@@ -23,16 +23,22 @@ namespace PraksaProjektBackend.Auth
             {
                 Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                 UserName = "Admin",
+                NormalizedUserName = "ADMIN",
                 FirstName = "Administ",
                 LastName = "Adi",
                 Address = "Mostarska",
                 Email = "admin@gmail.com",
+                NormalizedEmail = "ADMIN@GMAIL.COM",
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = true,
                 LockoutEnabled = false,
                 PhoneNumber = "1234567890"
             };
-
-            PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
-            passwordHasher.HashPassword(user, "Admin123?");
+            var password = new PasswordHasher<ApplicationUser>();
+            var hashed = password.HashPassword(user, "Admin123?");
+            user.PasswordHash = hashed;
+            //PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
+            //passwordHasher.HashPassword(user, "Admin123?");
 
             builder.Entity<ApplicationUser>().HasData(user);
         }
