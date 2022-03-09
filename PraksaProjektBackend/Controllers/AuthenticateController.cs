@@ -16,16 +16,19 @@ namespace PraksaProjektBackend.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
 
         public AuthenticateController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
+            SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _signInManager = signInManager;
         }
 
         [HttpPost]
@@ -58,7 +61,13 @@ namespace PraksaProjektBackend.Controllers
             }
             return Unauthorized();
         }
-
+        //[HttpPost]
+        //[Route("logout")]
+        //public async Task<IActionResult> Logout()
+        //{
+        //     await signInManager.SignOutAsync();
+        //    return Unauthorized();
+        //}
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -150,6 +159,68 @@ namespace PraksaProjektBackend.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
+        [HttpGet]
+        [Route("editaccount")]
+        public async Task<ActionResult<ApplicationUser>> EditAccount(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
+            }
+
+            var model = new EditAccountModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Firstname = user.FirstName,
+                Lastname = user.LastName,
+                Address = user.Address,
+                PhoneNumber = user.PhoneNumber,
+                Username = user.UserName
+            };
+
+            return user;
+        }
+
+
+        [HttpPost]
+        [Route("editaccount")]
+        public async Task<IActionResult> EditAccount(EditAccountModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+
+            if (user == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
+            }
+            else
+            {
+                user.Email = model.Email;
+                user.FirstName = model.Firstname;
+                user.LastName = model.Lastname;
+                user.Address = model.Address;
+                user.PhoneNumber = model.PhoneNumber;
+                user.UserName = model.Username;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return Ok(new Response { Status = "Success", Message = "User Updated successfully!" });
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                return Ok(new Response { Status = "Success", Message = "User Up successfully!" });
+            }
+        }
+
+
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         [Route("addtoorganizer")]

@@ -37,8 +37,6 @@ namespace PraksaProjektBackend.Auth
             var password = new PasswordHasher<ApplicationUser>();
             var hashed = password.HashPassword(user, "Admin123?");
             user.PasswordHash = hashed;
-            //PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
-            //passwordHasher.HashPassword(user, "Admin123?");
 
             builder.Entity<ApplicationUser>().HasData(user);
         }
