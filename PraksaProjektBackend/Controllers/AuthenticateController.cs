@@ -273,8 +273,44 @@ namespace PraksaProjektBackend.Controllers
                 return Ok(new Response { Status = "Success", Message = "User removed from role!" });
             }
             else
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User not found" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not found" });
         }
+
+        [HttpPost]
+        [Route("changepassword")]
+
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassword model)
+        {
+            var user = await _userManager.FindByNameAsync(model.Username);
+            if (user == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "User doesn't exist" });
+            }
+
+            if(string.Compare(model.NewPassword, model.ConfirmNewPassword)!=0)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "New password and confirm password does not match" });
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                var errors = new List<string>();
+
+                foreach(var error in result.Errors)
+                {
+                    errors.Add(error.Description);
+
+                }
+
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = String.Join(",",errors) });
+
+            }
+
+            return Ok(new Response { Status = "Success", Message = "Password changed successfully" });
+        }
+
+
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
