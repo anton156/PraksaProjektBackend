@@ -33,6 +33,7 @@ builder.Services.AddAuthentication(options =>
     configuration.GetSection("Authentication:Google");
     options.ClientId = googleAuthNSection["ClientId"];
     options.ClientSecret = googleAuthNSection["ClientSecret"];
+    options.SignInScheme = IdentityConstants.ExternalScheme;
 })
 
 // Adding Jwt Bearer

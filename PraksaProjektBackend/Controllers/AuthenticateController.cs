@@ -7,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace PraksaProjektBackend.Controllers
 {
@@ -61,6 +63,47 @@ namespace PraksaProjektBackend.Controllers
             }
             return Unauthorized();
         }
+        //google login
+        //[Route("google-login")]
+        //public IActionResult GoogleLogin()
+        //{
+        //    string redirectUrl = Url.Action("GoogleResponse", "Account");
+        //    var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+        //    return new ChallengeResult("Google", properties);
+        //}
+
+        //[Route("google-response")]
+        //public async Task<IActionResult> GoogleResponse()
+        //{
+        //    ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
+        //    if (info == null)
+        //        return RedirectToAction(nameof(Login));
+
+        //    var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+        //    string[] userInfo = { info.Principal.FindFirst(ClaimTypes.Name).Value, info.Principal.FindFirst(ClaimTypes.Email).Value };
+        //    if (result.Succeeded)
+        //        return Ok(new Response { Status = "Success", Message = String.Join(",", userInfo) });
+        //    else
+        //    {
+        //        ApplicationUser user = new ApplicationUser
+        //        {
+        //            Email = info.Principal.FindFirst(ClaimTypes.Email).Value,
+        //            UserName = info.Principal.FindFirst(ClaimTypes.Email).Value
+        //        };
+
+        //        IdentityResult identResult = await _userManager.CreateAsync(user);
+        //        if (identResult.Succeeded)
+        //        {
+        //            identResult = await _userManager.AddLoginAsync(user, info);
+        //            if (identResult.Succeeded)
+        //            {
+        //                await _signInManager.SignInAsync(user, false);
+        //                return Ok(new Response { Status = "Success", Message = String.Join(",", userInfo) });
+        //            }
+        //        }
+        //        return Unauthorized();
+        //    }
+        //}
         //[HttpPost]
         //[Route("logout")]
         //public async Task<IActionResult> Logout()
