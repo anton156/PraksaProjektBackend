@@ -45,6 +45,7 @@ namespace PraksaProjektBackend.Controllers
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(ClaimTypes.Hash, user.Id),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
@@ -202,39 +203,62 @@ namespace PraksaProjektBackend.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
+        
+        
+        //legacy edituser get
+        //[HttpGet]
+        //[Route("editaccount")]
+        //public async Task<ActionResult<ApplicationUser>> EditAccount(string id)
+        //{
+        //    var user = await _userManager.FindByIdAsync(id);
+
+        //    if (user == null)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
+        //    }
+
+        //    var model = new EditAccountModel
+        //    {
+        //        Id = user.Id,
+        //        Email = user.Email,
+        //        Firstname = user.FirstName,
+        //        Lastname = user.LastName,
+        //        Address = user.Address,
+        //        PhoneNumber = user.PhoneNumber,
+        //        Username = user.UserName
+        //    };
+
+        //    return user;
+        //}
+
+
         [HttpGet]
         [Route("editaccount")]
-        public async Task<ActionResult<ApplicationUser>> EditAccount(string id)
+        public IActionResult EditAccount()
         {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userMail = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+            if (userMail == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
+                return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "Not found" });
             }
-
-            var model = new EditAccountModel
+            else
             {
-                Id = user.Id,
-                Email = user.Email,
-                Firstname = user.FirstName,
-                Lastname = user.LastName,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber,
-                Username = user.UserName
-            };
-
-            return user;
+                ApplicationUser user = _userManager.FindByEmailAsync(userMail).Result;
+                return Ok(user);
+            }
         }
 
 
+        [Authorize]
         [HttpPost]
         [Route("editaccount")]
         public async Task<IActionResult> EditAccount(EditAccountModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
-
-            if (user == null)
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.Hash)?.Value;
+            if (user == null && model.Id != userId)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
             }
@@ -262,6 +286,9 @@ namespace PraksaProjektBackend.Controllers
                 return Ok(new Response { Status = "Success", Message = "User Up successfully!" });
             }
         }
+
+
+
 
 
         [Authorize(Roles = UserRoles.Admin)]
