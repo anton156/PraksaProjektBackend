@@ -6,7 +6,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
-using PraksaProjektBackend.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace PraksaProjektBackend.Controllers
 {
@@ -45,6 +46,7 @@ namespace PraksaProjektBackend.Controllers
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(ClaimTypes.Hash, user.Id),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
@@ -63,6 +65,47 @@ namespace PraksaProjektBackend.Controllers
             }
             return Unauthorized();
         }
+        //google login
+        //[Route("google-login")]
+        //public IActionResult GoogleLogin()
+        //{
+        //    string redirectUrl = Url.Action("GoogleResponse", "Account");
+        //    var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+        //    return new ChallengeResult("Google", properties);
+        //}
+
+        //[Route("google-response")]
+        //public async Task<IActionResult> GoogleResponse()
+        //{
+        //    ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
+        //    if (info == null)
+        //        return RedirectToAction(nameof(Login));
+
+        //    var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+        //    string[] userInfo = { info.Principal.FindFirst(ClaimTypes.Name).Value, info.Principal.FindFirst(ClaimTypes.Email).Value };
+        //    if (result.Succeeded)
+        //        return Ok(new Response { Status = "Success", Message = String.Join(",", userInfo) });
+        //    else
+        //    {
+        //        ApplicationUser user = new ApplicationUser
+        //        {
+        //            Email = info.Principal.FindFirst(ClaimTypes.Email).Value,
+        //            UserName = info.Principal.FindFirst(ClaimTypes.Email).Value
+        //        };
+
+        //        IdentityResult identResult = await _userManager.CreateAsync(user);
+        //        if (identResult.Succeeded)
+        //        {
+        //            identResult = await _userManager.AddLoginAsync(user, info);
+        //            if (identResult.Succeeded)
+        //            {
+        //                await _signInManager.SignInAsync(user, false);
+        //                return Ok(new Response { Status = "Success", Message = String.Join(",", userInfo) });
+        //            }
+        //        }
+        //        return Unauthorized();
+        //    }
+        //}
         //[HttpPost]
         //[Route("logout")]
         //public async Task<IActionResult> Logout()
@@ -161,39 +204,62 @@ namespace PraksaProjektBackend.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
+        
+        
+        //legacy edituser get
+        //[HttpGet]
+        //[Route("editaccount")]
+        //public async Task<ActionResult<ApplicationUser>> EditAccount(string id)
+        //{
+        //    var user = await _userManager.FindByIdAsync(id);
+
+        //    if (user == null)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
+        //    }
+
+        //    var model = new EditAccountModel
+        //    {
+        //        Id = user.Id,
+        //        Email = user.Email,
+        //        Firstname = user.FirstName,
+        //        Lastname = user.LastName,
+        //        Address = user.Address,
+        //        PhoneNumber = user.PhoneNumber,
+        //        Username = user.UserName
+        //    };
+
+        //    return user;
+        //}
+
+
         [HttpGet]
         [Route("editaccount")]
-        public async Task<ActionResult<ApplicationUser>> EditAccount(string id)
+        public IActionResult EditAccount()
         {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userMail = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+            if (userMail == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
+                return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "Not found" });
             }
-
-            var model = new EditAccountModel
+            else
             {
-                Id = user.Id,
-                Email = user.Email,
-                Firstname = user.FirstName,
-                Lastname = user.LastName,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber,
-                Username = user.UserName
-            };
-
-            return user;
+                ApplicationUser user = _userManager.FindByEmailAsync(userMail).Result;
+                return Ok(user);
+            }
         }
 
 
+        [Authorize]
         [HttpPost]
         [Route("editaccount")]
         public async Task<IActionResult> EditAccount(EditAccountModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
-
-            if (user == null)
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.Hash)?.Value;
+            if (user == null && model.Id != userId)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
             }
@@ -221,6 +287,9 @@ namespace PraksaProjektBackend.Controllers
                 return Ok(new Response { Status = "Success", Message = "User Up successfully!" });
             }
         }
+
+
+
 
 
         [Authorize(Roles = UserRoles.Admin)]
