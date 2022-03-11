@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PraksaProjektBackend.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using PraksaProjektBackend.Services;
 
 namespace PraksaProjektBackend.Controllers
 {
@@ -18,17 +18,19 @@ namespace PraksaProjektBackend.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IMailService _mailService;
 
         public AuthenticateController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,IMailService mailService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _signInManager = signInManager;
+            _mailService = mailService;
         }
 
         [HttpPost]
@@ -300,16 +302,61 @@ namespace PraksaProjektBackend.Controllers
                 foreach(var error in result.Errors)
                 {
                     errors.Add(error.Description);
-
                 }
 
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = String.Join(",",errors) });
-
             }
 
             return Ok(new Response { Status = "Success", Message = "Password changed successfully" });
         }
 
+        [HttpPost]
+        [Route("forgotpassword")]
+        public async Task<IActionResult> ForgotPassword([FromForm] ForgotPassword request)
+        {
+            if (string.IsNullOrEmpty(request.ToEmail))
+                return NotFound();
+
+            var result= await _mailService.SendEmailAsync(request);
+                
+            if (result.IsSuccess)
+                return Ok(result); 
+
+            return BadRequest(result);
+        }
+
+        [HttpPost]
+        [Route("resetpassword")]
+
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPassword model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            if (user != null)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+                if (result.Succeeded)
+                {
+                    return Ok(new Response { Status = "Success", Message = "Password changed successfully!" });
+
+                }
+                else
+                {
+                    var errors = new List<string>();
+
+                    foreach (var error in result.Errors)
+                    {
+                        errors.Add(error.Description);
+                    }
+
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = String.Join(",", errors) });
+                }
+
+            }
+            return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "User doesn't exist" });
+
+        }
 
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
