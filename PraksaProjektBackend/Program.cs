@@ -29,14 +29,14 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddGoogle(options =>
-{
-    IConfigurationSection googleAuthNSection =
-    configuration.GetSection("Authentication:Google");
-    options.ClientId = googleAuthNSection["ClientId"];
-    options.ClientSecret = googleAuthNSection["ClientSecret"];
-    options.SignInScheme = IdentityConstants.ExternalScheme;
-})
+//    .AddGoogle(options =>
+//{
+//    IConfigurationSection googleAuthNSection =
+//    configuration.GetSection("Authentication:Google");
+//    options.ClientId = googleAuthNSection["ClientId"];
+//    options.ClientSecret = googleAuthNSection["ClientSecret"];
+//    options.SignInScheme = IdentityConstants.ExternalScheme;
+//})
 
 // Adding Jwt Bearer
 .AddJwtBearer(options =>

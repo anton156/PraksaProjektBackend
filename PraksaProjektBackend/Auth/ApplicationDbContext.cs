@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PraksaProjektBackend.Models;
 
 namespace PraksaProjektBackend.Auth
 {
@@ -56,6 +57,10 @@ namespace PraksaProjektBackend.Auth
                 new IdentityUserRole<string>() { RoleId = "b3383add-afff-4c1a-9468-f807bcb74057", UserId = "b74ddd14-6340-4840-95c2-db12554843e5" }
                 );
         }
+
+        public DbSet<PraksaProjektBackend.Models.City> City { get; set; }
+
+        public DbSet<PraksaProjektBackend.Models.Venue> Venue { get; set; }
 
     }
 }

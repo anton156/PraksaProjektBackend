@@ -264,7 +264,7 @@ namespace PraksaProjektBackend.Migrations
                             Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                             AccessFailedCount = 0,
                             Address = "Mostarska",
-                            ConcurrencyStamp = "2f546439-86b5-49ec-a896-9635136640fb",
+                            ConcurrencyStamp = "f0ac4392-3aa1-44b3-b78c-243f6b4e7b6f",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Administ",
@@ -272,13 +272,59 @@ namespace PraksaProjektBackend.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAECBoeA8JE8gWiInRkGV9bx2FG8A37ETh3+BqTXdyGcWusHOFZAbuQ5ZDDjlSCp4+Qw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGrriZ6ELJQgO7DBeJ8qy8QCtvo3h8aGeQqNlMdWav9Fu/pEEh31ENKPNXDRCJWsVA==",
                             PhoneNumber = "1234567890",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "d92ba761-977e-4a78-aaea-cf5ef6828542",
+                            SecurityStamp = "455dd84b-5ec3-413e-a33a-f3be5a52132f",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });
+                });
+
+            modelBuilder.Entity("PraksaProjektBackend.Models.City", b =>
+                {
+                    b.Property<int>("CityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CityId"), 1L, 1);
+
+                    b.Property<string>("CityName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CityId");
+
+                    b.ToTable("City");
+                });
+
+            modelBuilder.Entity("PraksaProjektBackend.Models.Venue", b =>
+                {
+                    b.Property<int>("VenueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VenueId"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("VenueName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VenueId");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("Venue");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -330,6 +376,22 @@ namespace PraksaProjektBackend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PraksaProjektBackend.Models.Venue", b =>
+                {
+                    b.HasOne("PraksaProjektBackend.Models.City", "City")
+                        .WithMany("Venues")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
+            modelBuilder.Entity("PraksaProjektBackend.Models.City", b =>
+                {
+                    b.Navigation("Venues");
                 });
 #pragma warning restore 612, 618
         }
