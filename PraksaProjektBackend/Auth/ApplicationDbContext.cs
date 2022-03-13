@@ -62,5 +62,7 @@ namespace PraksaProjektBackend.Auth
 
         public DbSet<PraksaProjektBackend.Models.Venue> Venue { get; set; }
 
+        public DbSet<PraksaProjektBackend.Models.Post> Post { get; set; }
+
     }
 }
