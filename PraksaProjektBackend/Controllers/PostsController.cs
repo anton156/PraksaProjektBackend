@@ -24,37 +24,45 @@ namespace PraksaProjektBackend.Controllers
         {
             if(posts.PostImage.Length > 0)
             {
-                try
+                string imgext = Path.GetExtension(posts.PostImage.FileName);
+                if (imgext == ".jpg" || imgext == ".jpg")
                 {
-                    if(!Directory.Exists(_webHostEnvironment.WebRootPath + "\\Images\\"))
+                    try
                     {
-                        Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\Images\\");
-                    }
-
-                    using (FileStream filestream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\Images\\" + posts.PostImage.FileName))
-                    {
-                        posts.PostImage.CopyTo(filestream);
-                        filestream.Flush();
-                        var imagename = "\\Images\\" + posts.PostImage.FileName;
-
-                        var post = new Post
+                        if (!Directory.Exists(_webHostEnvironment.WebRootPath + "\\Images\\"))
                         {
-                            PostId = posts.PostId,
-                            Title = posts.Title,
-                            ImagePath = imagename,
-                            Content = posts.Content,
-                            CreatedDate = DateTime.Now
-                        };
-                        _context.Post.Add(post);
-                        await _context.SaveChangesAsync();
-                        return Ok(post);
-                    }
+                            Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\Images\\");
+                        }
 
-                    
+                        using (FileStream filestream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\Images\\" + posts.PostImage.FileName))
+                        {
+                            posts.PostImage.CopyTo(filestream);
+                            filestream.Flush();
+                            var imagename = "\\Images\\" + posts.PostImage.FileName;
+
+                            var post = new Post
+                            {
+                                PostId = posts.PostId,
+                                Title = posts.Title,
+                                ImagePath = imagename,
+                                Content = posts.Content,
+                                CreatedDate = DateTime.Now
+                            };
+                            _context.Post.Add(post);
+                            await _context.SaveChangesAsync();
+                            return Ok(post);
+                        }
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        return BadRequest(ex.Message);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    return BadRequest(ex.Message);
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Only support .jpg and .png" });
                 }
             }
             else
