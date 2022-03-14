@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
-using PraksaProjektBackend.ViewModels;
+using PraksaProjektBackend.Models;
 
 namespace PraksaProjektBackend.Controllers
 {
@@ -25,7 +25,7 @@ namespace PraksaProjektBackend.Controllers
         public async Task<IActionResult> GetAllOrganizers()
         {
             var users = _userManager.Users;
-            List<GetAllOrganizers> organizers = new();
+            List<User> organizers = new();
             var allOrganizers = await (from user in _dbContext.Users
                                     join userRole in _dbContext.UserRoles on user.Id
                                     equals userRole.UserId
@@ -34,7 +34,7 @@ namespace PraksaProjektBackend.Controllers
                                     select user).ToListAsync();
             foreach (var o in allOrganizers)
             {
-                GetAllOrganizers organizer = new GetAllOrganizers
+                User organizer = new User
                 {
                     Id =o.Id,
                     Firstname = o.FirstName,
@@ -58,7 +58,7 @@ namespace PraksaProjektBackend.Controllers
         public async Task<IActionResult> GetAllCustomers()
         {
             var users = _userManager.Users;
-            List<GetAllCustomers> customers = new();
+            List<User> customers = new();
             var allCustomers= await (from user in _dbContext.Users
                                        join userRole in _dbContext.UserRoles on user.Id
                                        equals userRole.UserId
@@ -67,7 +67,7 @@ namespace PraksaProjektBackend.Controllers
                                        select user).ToListAsync();
             foreach (var c in allCustomers)
             {
-                GetAllCustomers customer = new GetAllCustomers
+                User customer = new User
                 {
                     Id = c.Id,
                     Firstname = c.FirstName,

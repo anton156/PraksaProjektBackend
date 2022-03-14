@@ -1,6 +1,6 @@
-﻿namespace PraksaProjektBackend.ViewModels
+﻿namespace PraksaProjektBackend.Models
 {
-    public class GetAllOrganizers
+    public class User
     {
         public string? Id { get; set; }
         public string? Firstname { get; set; }

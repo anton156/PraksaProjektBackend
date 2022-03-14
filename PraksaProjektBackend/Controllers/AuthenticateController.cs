@@ -111,8 +111,8 @@ namespace PraksaProjektBackend.Controllers
         //[Route("logout")]
         //public async Task<IActionResult> Logout()
         //{
-        //     await signInManager.SignOutAsync();
-        //    return Unauthorized();
+        //   await _signInManager.SignOutAsync();
+        //   return Unauthorized();
         //}
         [HttpPost]
         [Route("register")]
@@ -205,8 +205,8 @@ namespace PraksaProjektBackend.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
-        
-        
+
+
         //legacy edituser get
         //[HttpGet]
         //[Route("editaccount")]
@@ -288,8 +288,6 @@ namespace PraksaProjektBackend.Controllers
                 return Ok(new Response { Status = "Success", Message = "User Up successfully!" });
             }
         }
-
-
 
 
 
