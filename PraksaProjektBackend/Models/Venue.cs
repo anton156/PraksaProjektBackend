@@ -18,5 +18,7 @@ namespace PraksaProjektBackend.Models
         public City? City { get; set; }
 
         public int CityId { get; set; }
+
+        public List<CurrentEvent>? CurrentEvents { get; set; }
     }
 }
