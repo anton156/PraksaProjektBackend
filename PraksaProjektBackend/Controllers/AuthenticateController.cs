@@ -66,6 +66,15 @@ namespace PraksaProjektBackend.Controllers
             }
             return Unauthorized();
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Unauthorized();
+        }
         //google login
         //[Route("google-login")]
         //public IActionResult GoogleLogin()
@@ -107,13 +116,8 @@ namespace PraksaProjektBackend.Controllers
         //        return Unauthorized();
         //    }
         //}
-        //[HttpPost]
-        //[Route("logout")]
-        //public async Task<IActionResult> Logout()
-        //{
-        //   await _signInManager.SignOutAsync();
-        //   return Unauthorized();
-        //}
+
+
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -346,6 +350,8 @@ namespace PraksaProjektBackend.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not found" });
         }
 
+
+        [Authorize]
         [HttpPost]
         [Route("changepassword")]
 

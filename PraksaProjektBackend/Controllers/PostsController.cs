@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
 
@@ -19,7 +20,29 @@ namespace PraksaProjektBackend.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        [HttpGet]
+        [Route("getallposts")]
+        public async Task<ActionResult<IEnumerable<Post>>> GetPost()
+        {
+            return await _context.Post.ToListAsync();
+        }
+
+        [HttpGet("{id}")]
+        
+        public async Task<ActionResult<Post>> GetPost(int id)
+        {
+            var post = await _context.Post.FindAsync(id);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            return post;
+        }
+
         [HttpPost]
+        [Route("createpost")]
         public async Task<IActionResult> Create([FromForm] Post posts)
         {
             if(posts.PostImage.Length > 0)
@@ -70,5 +93,28 @@ namespace PraksaProjektBackend.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Creation Failed!" });
             }
         }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            var post = await _context.Post.FindAsync(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            _context.Post.Remove(post);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool PostExists(int id)
+        {
+            return _context.Post.Any(e => e.PostId == id);
+        }
+
+
     }
 }
