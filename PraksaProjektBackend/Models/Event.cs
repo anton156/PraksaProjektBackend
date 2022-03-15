@@ -8,16 +8,18 @@ namespace PraksaProjektBackend.Models
 
         public string? EventName { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
-        [DataType(DataType.Date)]
-        public DateTime? EventDate { get; set; }
+        public DateTime? Begin { get; set; }
+
+        public DateTime? End { get; set; }
 
         public string? Content { get; set; }
 
         public string? OrganizersName { get; set; }
 
-        public float Profit { get; set; }
+        public float Profit { get; set; } = 0;
 
-        public string? EventTypeName { get; set; }
+        public int? EventTypeId { get; set; }
+
+        public int? VenueId { get; set; }
     }
 }

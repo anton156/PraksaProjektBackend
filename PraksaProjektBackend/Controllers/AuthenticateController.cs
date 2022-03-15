@@ -245,7 +245,7 @@ namespace PraksaProjektBackend.Controllers
         public IActionResult EditAccount()
         {
             var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            var userMail = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+            var userMail = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value;
             if (userMail == null)
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "Not found" });
@@ -266,7 +266,7 @@ namespace PraksaProjektBackend.Controllers
             var user = await _userManager.FindByIdAsync(model.Id);
             var claimsIdentity = this.User.Identity as ClaimsIdentity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.Hash)?.Value;
-            if (user == null && model.Id != userId)
+            if (user == null || model.Id != userId)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
             }
@@ -360,7 +360,9 @@ namespace PraksaProjektBackend.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePassword model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-            if (user == null)
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (user == null || model.Username != userName)
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "User doesn't exist" });
             }

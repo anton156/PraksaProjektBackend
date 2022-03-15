@@ -48,7 +48,7 @@ namespace PraksaProjektBackend.Controllers
             if(posts.PostImage.Length > 0)
             {
                 string imgext = Path.GetExtension(posts.PostImage.FileName);
-                if (imgext == ".jpg" || imgext == ".jpg")
+                if (imgext == ".jpg" || imgext == ".png")
                 {
                     try
                     {

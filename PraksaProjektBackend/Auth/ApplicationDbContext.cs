@@ -64,5 +64,11 @@ namespace PraksaProjektBackend.Auth
 
         public DbSet<PraksaProjektBackend.Models.Post> Post { get; set; }
 
+        public DbSet<PraksaProjektBackend.Models.EventType> EventType { get; set; }
+
+        public DbSet<PraksaProjektBackend.Models.CurrentEvent> CurrentEvent { get; set; }
+
+        public DbSet<PraksaProjektBackend.Models.Event> Event { get; set; }
+
     }
 }
