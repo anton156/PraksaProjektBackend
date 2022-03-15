@@ -294,8 +294,45 @@ namespace PraksaProjektBackend.Controllers
                 return Ok(new Response { Status = "Success", Message = "User Up successfully!" });
             }
         }
+        [Authorize]
+        [HttpDelete]
+        [Route("deleteaccount")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user != null)
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                var userClaims = identity.Claims;
+                var role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value;
+                var accountid = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Hash)?.Value;
+
+                // users can delete their own account and admins can delete any account
+                if (id != accountid && role != UserRoles.Admin)
+                    return Unauthorized(new { message = "Unauthorized" });
+
+                var result = await _userManager.DeleteAsync(user);
+                if (!result.Succeeded)
+                {
+                    var errors = new List<string>();
+
+                    foreach (var error in result.Errors)
+                    {
+                        errors.Add(error.Description);
+                    }
+
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = String.Join(",", errors) });
+                }
+
+                return Ok(new Response { Status = "Success", Message = "Account deleted successfully" });
 
 
+            }
+            else
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User not found" });
+
+        }
 
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
