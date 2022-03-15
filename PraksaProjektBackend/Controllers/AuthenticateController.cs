@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using PraksaProjektBackend.Services;
+using PraksaProjektBackend.Models;
 
 namespace PraksaProjektBackend.Controllers
 {
@@ -46,7 +47,8 @@ namespace PraksaProjektBackend.Controllers
 
                 var authClaims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.NameIdentifier, user.UserName),
                     new Claim(ClaimTypes.Hash, user.Id),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
@@ -430,6 +432,29 @@ namespace PraksaProjektBackend.Controllers
             }
             return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "User doesn't exist" });
 
+        }
+
+        [HttpGet]
+        [Route("getcurrentuser")]
+        public UserInfo GetCurrentUser()
+        {
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+
+                var userClaims = identity.Claims;
+
+
+                return new UserInfo
+                {
+
+                    Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
+                    Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value,
+                    Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value
+                };
+            }
+            return null;
         }
 
 
