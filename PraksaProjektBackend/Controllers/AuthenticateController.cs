@@ -427,7 +427,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpPost]
         [Route("forgotpassword")]
-        public async Task<IActionResult> ForgotPassword([FromForm] ForgotPassword request)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPassword request)
         {
             if (string.IsNullOrEmpty(request.ToEmail))
                 return NotFound();

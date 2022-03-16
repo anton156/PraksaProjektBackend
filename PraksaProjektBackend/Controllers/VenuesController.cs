@@ -74,6 +74,46 @@ namespace PraksaProjektBackend.Controllers
             return NoContent();
         }
 
+        [HttpPost]
+        [Route("disablevenue")]
+        public async Task<ActionResult> DisableVenue(int id)
+        {
+            var venue = await _context.Venue.FindAsync(id);
+            venue.Status = false;
+            await _context.SaveChangesAsync();
+            return Ok(venue);
+
+            //Backup in case we run into problems with above code
+            //var venue = _context.Venue.Where(x => x.VenueId == id).ToList();
+
+            //foreach (var stat in venue)
+            //{
+            //    stat.Status = false;
+            //}
+            //_context.SaveChanges();
+            //return Ok(venue);
+        }
+
+        [HttpPost]
+        [Route("enablevenue")]
+        public async Task<ActionResult> EnableVenue(int id)
+        {
+            var venue = await _context.Venue.FindAsync(id);
+            venue.Status = true;
+            await _context.SaveChangesAsync();
+            return Ok(venue);
+
+            //Backup in case we run into problems with above code
+            //var venue = _context.Venue.Where(x => x.VenueId == id).ToList();
+
+            //foreach (var stat in venue)
+            //{
+            //    stat.Status = true;
+            //}
+            //_context.SaveChanges();
+            //return Ok(venue);
+        }
+
         // POST: api/Venues
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
 using System.Security.Claims;
@@ -20,6 +21,48 @@ namespace PraksaProjektBackend.Controllers
         }
 
 
+
+        [HttpGet]
+        [Route("getallcurrentevents")]
+        public async Task<ActionResult<IEnumerable<CurrentEvent>>> GetCurrentEvent()
+        {
+            return await _context.CurrentEvent.ToListAsync();
+        }
+
+        [HttpGet]
+        [Route("getallevents")]
+        public async Task<ActionResult<IEnumerable<Event>>> GetEvent()
+        {
+            return await _context.Event.ToListAsync();
+        }
+
+        [HttpGet]
+        [Route("getonecurrentevent")]
+        public async Task<ActionResult<CurrentEvent>> GetCurrentEvent(int id)
+        {
+            var currentevent = await _context.CurrentEvent.FindAsync(id);
+
+            if (currentevent == null)
+            {
+                return NotFound();
+            }
+
+            return currentevent;
+        }
+
+        [HttpGet]
+        [Route("getoneevent")]
+        public async Task<ActionResult<Event>> GetEvent(int id)
+        {
+            var eventone = await _context.Event.FindAsync(id);
+
+            if (eventone == null)
+            {
+                return NotFound();
+            }
+
+            return eventone;
+        }
 
         [HttpPost]
         [Route("createevent")]
@@ -61,6 +104,15 @@ namespace PraksaProjektBackend.Controllers
                                 VenueId = currentevents.VenueId
                             };
                             _context.CurrentEvent.Add(currentevent);
+                            var venue = await _context.Venue.FindAsync(currentevent.VenueId);
+                            if (venue.Status == false)
+                            {
+                                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Venue not available" });
+                            }
+                            if (currentevent.NumberOfSeats > venue.Capacity || currentevent.Begin > currentevent.End)
+                            {
+                                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Number of seat exceeds capacity or date is incorrect"});
+                            }
                             var eventarh = new Event
                             {
                                 EventId = currentevents.CurrentEventId,
@@ -93,6 +145,38 @@ namespace PraksaProjektBackend.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Creation Failed!" });
             }
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCurrentEvent(int id)
+        {
+            var currentevent = await _context.CurrentEvent.FindAsync(id);
+            if (currentevent == null)
+            {
+                return NotFound();
+            }
+
+            _context.CurrentEvent.Remove(currentevent);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [Route("deletefinishedevents")]
+        public async Task<IActionResult> DeleteFinishedEvents()
+        {
+            var currentevent = await _context.CurrentEvent.Where(x => x.End < DateTime.Now).ToListAsync();
+            if (currentevent == null)
+            {
+                return NotFound();
+            }
+
+            _context.CurrentEvent.RemoveRange(currentevent);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
