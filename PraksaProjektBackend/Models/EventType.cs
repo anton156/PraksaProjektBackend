@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PraksaProjektBackend.Models
 {
@@ -9,7 +10,7 @@ namespace PraksaProjektBackend.Models
 
         [Required]
         public string? EventTypeName { get; set; }
-
+        [JsonIgnore]
         public List<CurrentEvent>? CurrentEvents { get; set; }
     }
 }

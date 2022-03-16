@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using PraksaProjektBackend.Settings;
 using PraksaProjektBackend.Services;
 using System.Text.Json.Serialization;
+using PraksaProjektBackend.Filter;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -89,6 +90,8 @@ builder.Services.AddSwaggerGen(option =>
             new string[]{}
         }
     });
+    option.SchemaFilter<SwaggerIgnoreFilter>();
+    option.OperationFilter<IgnorePropertyFilter>();
 });
 
 var app = builder.Build();

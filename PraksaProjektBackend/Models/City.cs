@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PraksaProjektBackend.Models
 {
@@ -8,7 +9,7 @@ namespace PraksaProjektBackend.Models
 
         [Required]
         public string? CityName { get; set; }
-
+        [JsonIgnore]
         public List<Venue>? Venues { get; set; }
 
 

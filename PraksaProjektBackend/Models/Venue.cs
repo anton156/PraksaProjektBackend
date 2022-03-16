@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PraksaProjektBackend.Models
 {
@@ -17,12 +18,12 @@ namespace PraksaProjektBackend.Models
         public int? Capacity { get; set; }
 
         public bool? Status { get; set; } = true;
-
+        [JsonIgnore]
         public City? City { get; set; }
 
         [Required]
         public int CityId { get; set; }
-
+        [JsonIgnore]
         public List<CurrentEvent>? CurrentEvents { get; set; }
     }
 }
