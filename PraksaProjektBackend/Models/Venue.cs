@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PraksaProjektBackend.Filter;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace PraksaProjektBackend.Models
@@ -6,6 +7,7 @@ namespace PraksaProjektBackend.Models
     public class Venue
     {
         [Key]
+        [SwaggerIgnore]
         public int VenueId { get; set; }
 
         [Required]
@@ -18,7 +20,7 @@ namespace PraksaProjektBackend.Models
         public int? Capacity { get; set; }
 
         public bool? Status { get; set; } = true;
-        [JsonIgnore]
+        [SwaggerIgnore]
         public City? City { get; set; }
 
         [Required]

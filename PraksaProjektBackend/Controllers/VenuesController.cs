@@ -26,14 +26,14 @@ namespace PraksaProjektBackend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Venue>>> GetVenue()
         {
-            return await _context.Venue.ToListAsync();
+            return await _context.Venue.Include(x => x.City).ToListAsync();
         }
 
         // GET: api/Venues/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Venue>> GetVenue(int id)
         {
-            var venue = await _context.Venue.FindAsync(id);
+            var venue = await _context.Venue.Include(x => x.City).FirstOrDefaultAsync(i => i.VenueId == id);
 
             if (venue == null)
             {

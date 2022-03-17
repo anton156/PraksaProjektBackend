@@ -26,7 +26,7 @@ namespace PraksaProjektBackend.Controllers
         [Route("getallcurrentevents")]
         public async Task<ActionResult<IEnumerable<CurrentEvent>>> GetCurrentEvent()
         {
-            return await _context.CurrentEvent.ToListAsync();
+            return await _context.CurrentEvent.Include(x => x.EventType).Include(x => x.Venue).ThenInclude(x => x.City).ToListAsync();
         }
 
         [HttpGet]
@@ -40,7 +40,7 @@ namespace PraksaProjektBackend.Controllers
         [Route("getonecurrentevent")]
         public async Task<ActionResult<CurrentEvent>> GetCurrentEvent(int id)
         {
-            var currentevent = await _context.CurrentEvent.FindAsync(id);
+            var currentevent = await _context.CurrentEvent.Include(x => x.EventType).Include(x => x.Venue).ThenInclude(x => x.City).FirstOrDefaultAsync(i => i.CurrentEventId == id);
 
             if (currentevent == null)
             {

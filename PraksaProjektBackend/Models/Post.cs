@@ -7,6 +7,7 @@ namespace PraksaProjektBackend.Models
     public class Post
     {
         [Key]
+        [SwaggerIgnore]
         public int PostId { get; set; }
         [NotMapped]
         public IFormFile? PostImage { get; set; }

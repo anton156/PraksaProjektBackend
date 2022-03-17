@@ -7,6 +7,7 @@ namespace PraksaProjektBackend.Models
     public class CurrentEvent
     {
         [Key]
+        [SwaggerIgnore]
         public int CurrentEventId { get; set; }
         
         [Required]
