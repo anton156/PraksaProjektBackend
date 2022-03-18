@@ -7,7 +7,7 @@ namespace PraksaProjektBackend.Models
     public class Venue
     {
         [Key]
-        [SwaggerIgnore]
+        
         public int VenueId { get; set; }
 
         [Required]

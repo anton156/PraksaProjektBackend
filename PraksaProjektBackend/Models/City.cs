@@ -6,7 +6,7 @@ namespace PraksaProjektBackend.Models
 {
     public class City
     {
-        [SwaggerIgnore]
+        
         public int CityId { get; set; }
 
         [Required]

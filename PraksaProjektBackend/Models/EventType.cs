@@ -7,7 +7,7 @@ namespace PraksaProjektBackend.Models
     public class EventType
     {
         [Key]
-        [SwaggerIgnore]
+        
         public int EventTypeId { get; set; }
 
         [Required]
