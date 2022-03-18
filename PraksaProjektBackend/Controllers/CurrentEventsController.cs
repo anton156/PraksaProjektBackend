@@ -178,5 +178,20 @@ namespace PraksaProjektBackend.Controllers
 
             return NoContent();
         }
-    }
+
+
+        [HttpPost]
+        [Route("reserveticket")]
+        public async Task<ActionResult> EnableVenue(int id, int reserve)
+        {
+            var currentevent = await _context.CurrentEvent.FindAsync(id);
+            if (currentevent.NumberOfSeats < reserve)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not enought seats" });
+            }
+            currentevent.NumberOfSeats = currentevent.NumberOfSeats - reserve;
+            await _context.SaveChangesAsync();
+            return Ok(currentevent);
+        }
+        }
 }
