@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
+using PraksaProjektBackend.ViewModel;
 using System.Security.Claims;
 
 namespace PraksaProjektBackend.Controllers
@@ -37,6 +38,31 @@ namespace PraksaProjektBackend.Controllers
         }
 
         [HttpGet]
+        [Route("getcurrenteventeventbyeventtype")]
+        public async Task<ActionResult<IEnumerable<CurrentEvent>>> GetCurrentEventByEventType(int id)
+        {
+            return await _context.CurrentEvent.Where(x=> x.EventTypeId == id).ToListAsync();
+        }
+        [HttpGet]
+        [Route("geteventbyeventtype")]
+        public async Task<ActionResult<IEnumerable<Event>>> GetEventByEventType(int id)
+        {
+            return await _context.Event.Where(x => x.EventTypeId == id).ToListAsync();
+        }
+        [HttpGet]
+        [Route("getcurrenteventbyvenue")]
+        public async Task<ActionResult<IEnumerable<CurrentEvent>>> GetCurrentEventByVenue(int id)
+        {
+            return await _context.CurrentEvent.Where(x => x.VenueId == id).ToListAsync();
+        }
+        [HttpGet]
+        [Route("geteventbyvenue")]
+        public async Task<ActionResult<IEnumerable<Event>>> GetEventByVenue(int id)
+        {
+            return await _context.Event.Where(x => x.VenueId == id).ToListAsync();
+        }
+
+        [HttpGet]
         [Route("getonecurrentevent")]
         public async Task<ActionResult<CurrentEvent>> GetCurrentEvent(int id)
         {
@@ -66,7 +92,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpPost]
         [Route("createevent")]
-        public async Task<IActionResult> Create([FromForm] CurrentEvent currentevents)
+        public async Task<IActionResult> Create([FromForm] CurrentEventViewModel currentevents)
         {
             if (currentevents.EventImage.Length > 0)
             {
