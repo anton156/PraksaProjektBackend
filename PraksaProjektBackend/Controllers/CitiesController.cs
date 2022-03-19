@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
@@ -24,6 +25,7 @@ namespace PraksaProjektBackend.Controllers
 
         // GET: api/Cities
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<City>>> GetCity()
         {
             return await _context.City.ToListAsync();

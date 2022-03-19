@@ -9,6 +9,7 @@ using PraksaProjektBackend.Settings;
 using PraksaProjektBackend.Services;
 using System.Text.Json.Serialization;
 using PraksaProjektBackend.Filter;
+using Microsoft.AspNetCore.OData;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -59,7 +60,8 @@ builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddCors();
 
 builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+    .AddOData(options => options.Select().Filter().OrderBy().Expand().Count().SkipToken());
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

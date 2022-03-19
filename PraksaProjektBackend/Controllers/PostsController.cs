@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
@@ -22,6 +23,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpGet]
         [Route("getallposts")]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<Post>>> GetPost()
         {
             return await _context.Post.ToListAsync();

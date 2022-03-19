@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
@@ -27,6 +28,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpGet]
         [Route("listallusers")]
+        [EnableQuery]
         public IActionResult ListUsers()
         {
             var users = _userManager.Users;

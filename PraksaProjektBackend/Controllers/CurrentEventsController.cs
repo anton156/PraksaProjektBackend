@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
@@ -25,6 +26,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpGet]
         [Route("getallcurrentevents")]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<CurrentEvent>>> GetCurrentEvent()
         {
             return await _context.CurrentEvent.Include(x => x.EventType).Include(x => x.Venue).ThenInclude(x => x.City).ToListAsync();
@@ -32,6 +34,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpGet]
         [Route("getallevents")]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvent()
         {
             return await _context.Event.ToListAsync();
