@@ -65,6 +65,17 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyPolicy",
+                          builder =>
+                          {
+                              builder.SetIsOriginAllowed(_ => true).AllowAnyHeader()
+                                      .AllowAnyMethod()
+                                      .AllowCredentials();
+                          });
+}); 
 //Swagger JWT Token
 builder.Services.AddSwaggerGen(option =>
 {
@@ -108,7 +119,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors("MyPolicy");
 
 app.UseAuthentication();
 

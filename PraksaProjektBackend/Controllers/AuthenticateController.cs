@@ -59,7 +59,12 @@ namespace PraksaProjektBackend.Controllers
                 }
 
                 var token = GetToken(authClaims);
-
+                Response.Cookies.Append("token", new JwtSecurityTokenHandler().WriteToken(token), new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None
+                });
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -69,14 +74,48 @@ namespace PraksaProjektBackend.Controllers
             return Unauthorized();
         }
 
-        [Authorize]
-        [HttpPost]
-        [Route("logout")]
-        public async Task<IActionResult> Logout()
+        [HttpGet]
+        [Route("loggeduser")]
+        public async Task<IActionResult> LoggedUser()
         {
-            await _signInManager.SignOutAsync();
-            return Unauthorized();
+            try
+            {
+                var jwt = Request.Cookies["token"];
+                var token = Verify(jwt);
+                var userId = token.Payload.Claims.FirstOrDefault(o => o.Type == ClaimTypes.Hash)?.Value;
+                var user = await _userManager.FindByIdAsync(userId);
+                return Ok(user);
+
+            }
+            catch (Exception)
+            {
+                return Unauthorized();
+            }
         }
+
+
+
+        [HttpGet]
+        [Route("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("token", new CookieOptions()
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+            });
+            return Ok(new Response { Status = "Success", Message = "Success" });
+
+        }
+        //[Authorize]
+        //[HttpPost]
+        //[Route("logout")]
+        //public async Task<IActionResult> Logout()
+        //{
+        //await _signInManager.SignOutAsync();
+        //  return Unauthorized();
+        //}
         //google login
         //[Route("google-login")]
         //public IActionResult GoogleLogin()
@@ -495,7 +534,21 @@ namespace PraksaProjektBackend.Controllers
             }
             return null;
         }
+        private JwtSecurityToken Verify(string jwt)
+        {
 
+            var tokenHandler = new JwtSecurityTokenHandler();
+            tokenHandler.ValidateToken(jwt, new TokenValidationParameters
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"])),
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = false,
+                ValidateAudience = false
+            }, out SecurityToken validatedToken);
+
+            return (JwtSecurityToken)validatedToken;
+
+        }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
