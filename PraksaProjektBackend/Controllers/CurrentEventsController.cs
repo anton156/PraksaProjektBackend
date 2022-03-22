@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
+using PraksaProjektBackend.Services;
 using PraksaProjektBackend.ViewModel;
 using System.Security.Claims;
 
@@ -222,5 +223,66 @@ namespace PraksaProjektBackend.Controllers
             await _context.SaveChangesAsync();
             return Ok(currentevent);
         }
+        [HttpPost]
+        [Route("pay")]
+        public async Task<dynamic> Pay(Payment pm, int eventId, int quantity)
+        {
+            var currentevent = await _context.CurrentEvent.FindAsync(eventId);
+            var pastevent = await _context.Event.FindAsync(eventId);
+            if (currentevent.NumberOfSeats < quantity || currentevent == null || currentevent.Begin < DateTime.Now)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not enought seats" });
+            }
+            pm.value = (int)(currentevent.Price * quantity * 100);
+            var result = await MakePayment.PayAsync(pm.cardnumber, pm.month, pm.year, pm.cvc, pm.value);
+            if(result == "Success")
+            {
+                currentevent.NumberOfSeats = currentevent.NumberOfSeats - quantity;
+                pastevent.Profit = pastevent.Profit + pm.value/100;
+                await _context.SaveChangesAsync();
+                return "Success";
+            }
+            else
+            {
+                return result;
+            }
         }
+        [HttpGet]
+        [Route("getallcharges")]
+        public async Task<dynamic> GetAllCharges()
+        {
+            var charges = await MakePayment.GetCharges();
+            return charges;
+        }
+
+        [HttpGet]
+        [Route("getcharge")]
+        public async Task<dynamic> GetOneCharge(string id)
+        {
+            var charges = await MakePayment.GetOneCharge(id);
+            return charges;
+        }
+        [HttpPost]
+        [Route("refund")]
+        public async Task<dynamic> Refund(string id)
+        {
+            return await MakePayment.Refund(id);
+        }
+
+        [HttpGet]
+        [Route("getallrefunds")]
+        public async Task<dynamic> GetAllRefunds()
+        {
+            var refund = await MakePayment.GetAllRefunds();
+            return refund;
+        }
+
+        [HttpGet]
+        [Route("getrefund")]
+        public async Task<dynamic> GetOneRefund(string id)
+        {
+            var refund = await MakePayment.GetOneRefund(id);
+            return refund;
+        }
+    }
 }
