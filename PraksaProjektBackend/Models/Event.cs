@@ -16,7 +16,7 @@ namespace PraksaProjektBackend.Models
 
         public string? OrganizersName { get; set; }
 
-        public float Profit { get; set; } = 0;
+        public int Profit { get; set; } = 0;
 
         public int? EventTypeId { get; set; }
 

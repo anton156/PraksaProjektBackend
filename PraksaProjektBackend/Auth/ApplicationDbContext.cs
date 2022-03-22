@@ -70,5 +70,7 @@ namespace PraksaProjektBackend.Auth
 
         public DbSet<PraksaProjektBackend.Models.Event> Event { get; set; }
 
+        public DbSet<PraksaProjektBackend.Models.Ticket> Ticket { get; set; }
+
     }
 }

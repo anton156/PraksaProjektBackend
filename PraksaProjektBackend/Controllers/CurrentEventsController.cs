@@ -15,7 +15,7 @@ namespace PraksaProjektBackend.Controllers
     public class CurrentEventsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        public static IWebHostEnvironment _webHostEnvironment;
+        public static IWebHostEnvironment? _webHostEnvironment;
 
         public CurrentEventsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
@@ -125,7 +125,7 @@ namespace PraksaProjektBackend.Controllers
                                 EventName = currentevents.EventName,
                                 Content = currentevents.Content,
                                 OrganizersName = userName,
-                                Price = currentevents.Price,
+                                Price = (int)currentevents.Price,
                                 NumberOfSeats = currentevents.NumberOfSeats,
                                 ImagePath = imagename,
                                 Begin = currentevents.Begin,
@@ -229,22 +229,43 @@ namespace PraksaProjektBackend.Controllers
         {
             var currentevent = await _context.CurrentEvent.FindAsync(eventId);
             var pastevent = await _context.Event.FindAsync(eventId);
-            if (currentevent.NumberOfSeats < quantity || currentevent == null || currentevent.Begin < DateTime.Now)
+            if (currentevent != null && pastevent != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not enought seats" });
-            }
-            pm.value = (int)(currentevent.Price * quantity * 100);
-            var result = await MakePayment.PayAsync(pm.cardnumber, pm.month, pm.year, pm.cvc, pm.value);
-            if(result == "Success")
-            {
-                currentevent.NumberOfSeats = currentevent.NumberOfSeats - quantity;
-                pastevent.Profit = pastevent.Profit + pm.value/100;
-                await _context.SaveChangesAsync();
-                return "Success";
+                if (currentevent.NumberOfSeats < quantity || currentevent == null || currentevent.Begin < DateTime.Now)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not enought seats" });
+                }
+                pm.value = (int)(currentevent.Price * quantity * 100);
+                var result = await MakePayment.PayAsync(pm.cardnumber, pm.month, pm.year, pm.cvc, pm.value);
+                if (result.Contains("Failed"))
+                {
+                    return result;
+                }
+                else
+                {
+                    currentevent.NumberOfSeats = currentevent.NumberOfSeats - quantity;
+                    pastevent.Profit = pastevent.Profit + pm.value;
+                    var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                    var userId = claimsIdentity.FindFirst(ClaimTypes.Hash)?.Value;
+                    var userMail = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value;
+                    var ticket = new Ticket
+                    {
+                        validUses = quantity,
+                        chargeId = result,
+                        userId = userId,
+                        userEmail = userMail,
+                        price = pm.value,
+                        eventId = eventId,
+                        start = currentevent.Begin,
+                    };
+                    _context.Ticket.Add(ticket);
+                    await _context.SaveChangesAsync();
+                    return "Success";
+                }
             }
             else
             {
-                return result;
+                return "Failed";
             }
         }
         [HttpGet]
@@ -266,7 +287,30 @@ namespace PraksaProjektBackend.Controllers
         [Route("refund")]
         public async Task<dynamic> Refund(string id)
         {
-            return await MakePayment.Refund(id);
+            var ticket = await _context.Ticket.Where(x => x.chargeId == id).FirstAsync();
+            var currentevent = await _context.CurrentEvent.FindAsync(ticket.eventId);
+            var arhevent = await _context.Event.FindAsync(ticket.eventId);
+            if (currentevent != null && arhevent != null)
+            {
+                var refund = await MakePayment.Refund(id);
+                if (refund == "Success")
+                {
+
+                    ticket.valid = false;
+                    currentevent.NumberOfSeats = currentevent.NumberOfSeats + ticket.validUses;
+                    arhevent.Profit = arhevent.Profit - ticket.price;
+                    await _context.SaveChangesAsync();
+                    return "Success";
+                }
+                else
+                {
+                    return refund;
+                }
+            }
+            else
+            {
+                return "Failed";
+            }
         }
 
         [HttpGet]

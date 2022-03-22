@@ -36,10 +36,9 @@ namespace PraksaProjektBackend.Services
 
                 var service = new ChargeService();
                 Charge charge = await service.CreateAsync(options);
-                var idi = charge.Id;
                 if (charge.Paid)
                 {
-                    return "Success";
+                    return charge.Id;
                 }
                 else
                 {
@@ -49,7 +48,7 @@ namespace PraksaProjektBackend.Services
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return "Failed " + ex.Message;
             }
         }
         public static async Task<StripeList<Charge>> GetCharges()
@@ -78,24 +77,29 @@ namespace PraksaProjektBackend.Services
 
         public static async Task<dynamic> Refund(string id)
         {
-
-            StripeConfiguration.ApiKey = "sk_test_51KfnsTGklHgcWdIW5HnZ94npevVpnlFKrRqa8UintmjlWZqeOn7p75NvD3f0m8qI4y8fqDTxxH2HZj8zGrqRUadR00ow9Z9QQQ";
-
-            var options = new RefundCreateOptions
+            try
             {
-                Charge = id,
-            };
-            var service = new RefundService();
-            Refund refund = await service.CreateAsync(options);
-            if(refund.Object == "refund")
-            {
-                return "Success";
+                StripeConfiguration.ApiKey = "sk_test_51KfnsTGklHgcWdIW5HnZ94npevVpnlFKrRqa8UintmjlWZqeOn7p75NvD3f0m8qI4y8fqDTxxH2HZj8zGrqRUadR00ow9Z9QQQ";
+
+                var options = new RefundCreateOptions
+                {
+                    Charge = id,
+                };
+                var service = new RefundService();
+                Refund refund = await service.CreateAsync(options);
+                if (refund.Object == "refund")
+                {
+                    return "Success";
+                }
+                else
+                {
+                    return "Failed";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return "Failed";
+                return "Failed " + ex.Message;
             }
-
         }
 
         public static async Task<StripeList<Refund>> GetAllRefunds()

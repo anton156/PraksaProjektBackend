@@ -1,6 +1,7 @@
 ﻿using PraksaProjektBackend.Filter;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PraksaProjektBackend.Models
 {
@@ -19,7 +20,7 @@ namespace PraksaProjektBackend.Models
         public string? OrganizersName { get; set; }
 
         [Required]
-        public float Price { get; set; }
+        public int Price { get; set; }
 
         [Required]
         public int NumberOfSeats { get; set; }
@@ -44,5 +45,7 @@ namespace PraksaProjektBackend.Models
 
         [Required]
         public int VenueId { get; set; }
+        [JsonIgnore]
+        public List<Ticket>? Tickets { get; set; }
     }
 }
