@@ -68,9 +68,12 @@ namespace PraksaProjektBackend.Services
             email.Subject = "Ticket QR Code";
 
             var builder = new BodyBuilder();
+            var diskpath = "wwwroot/QRcode/QR_" + chargeid + ".jpg";
             var imgpath = "https://localhost:7100/QR_" + chargeid + ".jpg";
             var bodyhtml = "<html><body> <p> QR code as below</p> <p> <img src='" + imgpath + "' alt='QR Code'/></p> </body></html>";
             builder.HtmlBody = bodyhtml;
+
+            builder.Attachments.Add(diskpath);
 
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();

@@ -271,7 +271,7 @@ namespace PraksaProjektBackend.Controllers
                     };
                     var emailsent = await _mailService.SendQrEmailAsync(result, userMail);
                     _context.Ticket.Add(ticket);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(); 
                     return "Success";
                 }
             }
