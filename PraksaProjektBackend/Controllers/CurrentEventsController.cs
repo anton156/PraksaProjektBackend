@@ -16,11 +16,13 @@ namespace PraksaProjektBackend.Controllers
     {
         private readonly ApplicationDbContext _context;
         public static IWebHostEnvironment? _webHostEnvironment;
+        private readonly IMailService _mailService;
 
-        public CurrentEventsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public CurrentEventsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, IMailService mailService)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _mailService = mailService;
         }
 
 
@@ -259,6 +261,7 @@ namespace PraksaProjektBackend.Controllers
                         eventId = eventId,
                         start = currentevent.Begin,
                     };
+                    var emailsent = await _mailService.SendQrEmailAsync(result, userMail);
                     _context.Ticket.Add(ticket);
                     await _context.SaveChangesAsync();
                     return "Success";

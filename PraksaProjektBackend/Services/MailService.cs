@@ -59,6 +59,30 @@ namespace PraksaProjektBackend.Services
             };
         }
 
+        public async Task<dynamic> SendQrEmailAsync(string chargeid, string usermail)
+        {
+
+            var email = new MimeMessage();
+            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+            email.To.Add(MailboxAddress.Parse(usermail));
+            email.Subject = "Ticket QR Code";
+
+            var builder = new BodyBuilder();
+            var imgpath = "https://localhost:7100/QR_" + chargeid + ".jpg";
+            var bodyhtml = "<html><body> <p> QR code as below</p> <p> <img src='" + imgpath + "' alt='QR Code'/></p> </body></html>";
+            builder.HtmlBody = bodyhtml;
+
+            email.Body = builder.ToMessageBody();
+            using var smtp = new SmtpClient();
+            smtp.CheckCertificateRevocation = false;
+            smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+            await smtp.SendAsync(email);
+            smtp.Disconnect(true);
+
+            return "Success";
+        }
+
 
     }
 }
