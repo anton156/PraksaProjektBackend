@@ -254,6 +254,7 @@ namespace PraksaProjektBackend.Controllers
                         chargeId = result,
                         userId = userId,
                         userEmail = userMail,
+                        qrPath = await QrCodeMaker.MakeQrCode(result, quantity, userMail, eventId),
                         price = pm.value,
                         eventId = eventId,
                         start = currentevent.Begin,
