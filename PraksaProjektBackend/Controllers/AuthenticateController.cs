@@ -84,7 +84,15 @@ namespace PraksaProjektBackend.Controllers
                 var token = Verify(jwt);
                 var userId = token.Payload.Claims.FirstOrDefault(o => o.Type == ClaimTypes.Hash)?.Value;
                 var user = await _userManager.FindByIdAsync(userId);
-                return Ok(user);
+                var roles = await _userManager.GetRolesAsync(user);
+                var userinfo = new UserInfo
+                {
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Role = roles.First(),
+                };
+
+                return Ok(userinfo);
 
             }
             catch (Exception)
@@ -92,6 +100,7 @@ namespace PraksaProjektBackend.Controllers
                 return Unauthorized();
             }
         }
+
 
 
 
@@ -512,28 +521,28 @@ namespace PraksaProjektBackend.Controllers
 
         }
 
-        [HttpGet]
-        [Route("getcurrentuser")]
-        public UserInfo GetCurrentUser()
-        {
+       // [HttpGet]
+       // [Route("getcurrentuser")]
+       //  public UserInfo GetCurrentUser()
+       // {
 
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
+       //     var identity = HttpContext.User.Identity as ClaimsIdentity;
+       //     if (identity != null)
+       //     {
 
-                var userClaims = identity.Claims;
+       //         var userClaims = identity.Claims;
 
 
-                return new UserInfo
-                {
+       //         return new UserInfo
+       //         {
 
-                    Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
-                    Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value,
-                    Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value
-                };
-            }
-            return null;
-        }
+       //             Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
+       //             Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value,
+       //             Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value
+       //         };
+       //     }
+       //     return null;
+       // }
         private JwtSecurityToken Verify(string jwt)
         {
 

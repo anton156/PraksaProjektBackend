@@ -195,6 +195,7 @@ namespace PraksaProjektBackend.Controllers
             return NoContent();
         }
 
+
         [HttpDelete]
         [Route("deletefinishedevents")]
         public async Task<IActionResult> DeleteFinishedEvents()
@@ -211,6 +212,13 @@ namespace PraksaProjektBackend.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("getavailablevenues")]
+        public async Task<ActionResult> GetAvailableVenues(DateTime begin, DateTime end)
+        {
+            var venues = await _context.CurrentEvent.Where(x => x.Begin > end || x.End < begin).Include(x => x.Venue).Select(x => x.Venue).Distinct().ToListAsync();
+            return Ok(venues);
+        } 
 
         [HttpPost]
         [Route("reserveticket")]
