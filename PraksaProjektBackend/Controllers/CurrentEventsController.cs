@@ -145,6 +145,11 @@ namespace PraksaProjektBackend.Controllers
                             {
                                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Number of seat exceeds capacity or date is incorrect"});
                             }
+                            var occupied = await _context.CurrentEvent.Where(x => x.VenueId == currentevent.VenueId).Where(x => x.Begin <= currentevents.End && x.End >= currentevents.Begin).Include(x => x.Venue).Select(x => x.Venue).Distinct().ToListAsync();
+                            if (occupied.Count != 0)
+                            {
+                                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Venue is occupied" });
+                            }
                             var eventarh = new Event
                             {
                                 EventId = currentevents.CurrentEventId,
