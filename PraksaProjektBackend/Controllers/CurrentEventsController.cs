@@ -221,9 +221,13 @@ namespace PraksaProjektBackend.Controllers
         [Route("getavailablevenues")]
         public async Task<ActionResult> GetAvailableVenues(DateTime begin, DateTime end)
         {
-            var venues = await _context.CurrentEvent.Where(x => x.Begin > end || x.End < begin).Include(x => x.Venue).Select(x => x.Venue).Distinct().ToListAsync();
-            return Ok(venues);
-        } 
+            var filter = await _context.CurrentEvent.Where(x => x.Begin < end && x.End > begin).Select(x => x.VenueId).Distinct().ToListAsync();
+
+            var result = await _context.Venue.Where(v => !filter.Contains(v.VenueId)).ToListAsync();
+
+
+            return Ok(result);
+        }
 
         [HttpPost]
         [Route("reserveticket")]

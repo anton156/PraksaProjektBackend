@@ -65,7 +65,7 @@ namespace PraksaProjektBackend.Controllers
             {
                 if (!VenueExists(id))
                 {
-                    return NotFound();
+                    return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "Venue not found!" });
                 }
                 else
                 {
@@ -73,7 +73,7 @@ namespace PraksaProjektBackend.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new Response { Status = "Success", Message = "Venue updated successfully" });
         }
 
         [HttpPost]

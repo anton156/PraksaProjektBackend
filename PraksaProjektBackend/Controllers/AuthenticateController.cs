@@ -84,12 +84,11 @@ namespace PraksaProjektBackend.Controllers
                 var token = Verify(jwt);
                 var userId = token.Payload.Claims.FirstOrDefault(o => o.Type == ClaimTypes.Hash)?.Value;
                 var user = await _userManager.FindByIdAsync(userId);
-                var roles = await _userManager.GetRolesAsync(user);
                 var userinfo = new UserInfo
                 {
                     Username = user.UserName,
                     Email = user.Email,
-                    Role = roles.First(),
+                    Role = await _userManager.GetRolesAsync(user),
                 };
 
                 return Ok(userinfo);
