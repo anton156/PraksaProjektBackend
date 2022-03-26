@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
 using PraksaProjektBackend.Models;
+using PraksaProjektBackend.Services;
 using QRCoder;
 using System.Drawing;
 
@@ -12,16 +14,19 @@ namespace PraksaProjektBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = UserRoles.Admin)]
     public class AdminController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IMailService _mailService;
 
         public AdminController(
-            UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
+            UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, IMailService mailService)
         {
             _userManager = userManager;
             _dbContext = dbContext;
+            _mailService = mailService;
         }
 
 
@@ -48,23 +53,11 @@ namespace PraksaProjektBackend.Controllers
             var users = _userManager.GetUsersInRoleAsync("Customer").Result;
             return Ok(users);
         }
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public byte[] ImageToByteArray(System.Drawing.Image imageIn)
-        {
-            MemoryStream ms = new MemoryStream();
-            imageIn.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            return ms.ToArray();
-        }
         [HttpGet]
         [Route("sendreservedticket")]
-        public async Task <IActionResult> SendReservation(string eventname)
+        public async Task <dynamic> SendReservation(string eventname, string email)
         {
-            QRCodeGenerator _qrCode = new QRCodeGenerator();
-            QRCodeData _qrCodeData = _qrCode.CreateQrCode("Reserved Ticket for " + eventname, QRCodeGenerator.ECCLevel.Q);
-            QRCode qrCode = new QRCode (_qrCodeData);
-            Bitmap qrCodeImage = qrCode.GetGraphic(20, Color.DarkRed, Color.PaleGreen, true);
-            var bytes = ImageToByteArray(qrCodeImage);
-            return File(bytes, "image/bmp");
+            return await _mailService.SendReservedQrEmailAsync(eventname, email);
         }
 
     }

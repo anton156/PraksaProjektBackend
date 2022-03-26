@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -14,6 +15,7 @@ namespace PraksaProjektBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = UserRoles.Admin)]
     public class VenuesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -26,6 +28,7 @@ namespace PraksaProjektBackend.Controllers
         // GET: api/Venues
         [HttpGet]
         [EnableQuery]
+        [Authorize(Roles = "Organizer, Admin")]
         public async Task<ActionResult<IEnumerable<Venue>>> GetVenue()
         {
             return await _context.Venue.Include(x => x.City).ToListAsync();
@@ -33,6 +36,7 @@ namespace PraksaProjektBackend.Controllers
 
         // GET: api/Venues/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Organizer, Admin")]
         public async Task<ActionResult<Venue>> GetVenue(int id)
         {
             var venue = await _context.Venue.Include(x => x.City).FirstOrDefaultAsync(i => i.VenueId == id);

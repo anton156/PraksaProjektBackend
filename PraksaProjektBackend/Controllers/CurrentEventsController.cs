@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace PraksaProjektBackend.Controllers
         {
             return await _context.CurrentEvent.Include(x => x.EventType).Include(x => x.Venue).ThenInclude(x => x.City).ToListAsync();
         }
-
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet]
         [Route("getallevents")]
         [EnableQuery]
@@ -49,6 +50,7 @@ namespace PraksaProjektBackend.Controllers
         {
             return await _context.CurrentEvent.Where(x=> x.EventTypeId == id).ToListAsync();
         }
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet]
         [Route("geteventbyeventtype")]
         public async Task<ActionResult<IEnumerable<Event>>> GetEventByEventType(int id)
@@ -61,6 +63,7 @@ namespace PraksaProjektBackend.Controllers
         {
             return await _context.CurrentEvent.Where(x => x.VenueId == id).ToListAsync();
         }
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet]
         [Route("geteventbyvenue")]
         public async Task<ActionResult<IEnumerable<Event>>> GetEventByVenue(int id)
@@ -82,6 +85,7 @@ namespace PraksaProjektBackend.Controllers
             return currentevent;
         }
 
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet]
         [Route("getoneevent")]
         public async Task<ActionResult<Event>> GetEvent(int id)
@@ -95,7 +99,7 @@ namespace PraksaProjektBackend.Controllers
 
             return eventone;
         }
-
+        [Authorize(Roles ="Admin, Organizer")]
         [HttpPost]
         [Route("createevent")]
         public async Task<IActionResult> Create([FromForm] CurrentEventViewModel currentevents)
@@ -184,7 +188,7 @@ namespace PraksaProjektBackend.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin, Organizer")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCurrentEvent(int id)
         {
@@ -200,7 +204,7 @@ namespace PraksaProjektBackend.Controllers
             return NoContent();
         }
 
-
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete]
         [Route("deletefinishedevents")]
         public async Task<IActionResult> DeleteFinishedEvents()
@@ -216,7 +220,7 @@ namespace PraksaProjektBackend.Controllers
 
             return NoContent();
         }
-
+        [Authorize(Roles ="Admin, Organizer")]
         [HttpGet]
         [Route("getavailablevenues")]
         public async Task<ActionResult> GetAvailableVenues(DateTime begin, DateTime end)
@@ -228,7 +232,7 @@ namespace PraksaProjektBackend.Controllers
 
             return Ok(result);
         }
-
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         [Route("reserveticket")]
         public async Task<ActionResult> EnableVenue(int id, int reserve)
@@ -242,6 +246,7 @@ namespace PraksaProjektBackend.Controllers
             await _context.SaveChangesAsync();
             return Ok(currentevent);
         }
+        [Authorize]
         [HttpPost]
         [Route("pay")]
         public async Task<dynamic> Pay(Payment pm, int eventId, int quantity)
@@ -289,6 +294,7 @@ namespace PraksaProjektBackend.Controllers
                 return "Failed";
             }
         }
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet]
         [Route("getallcharges")]
         public async Task<dynamic> GetAllCharges()
@@ -296,7 +302,7 @@ namespace PraksaProjektBackend.Controllers
             var charges = await MakePayment.GetCharges();
             return charges;
         }
-
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet]
         [Route("getcharge")]
         public async Task<dynamic> GetOneCharge(string id)
@@ -304,6 +310,7 @@ namespace PraksaProjektBackend.Controllers
             var charges = await MakePayment.GetOneCharge(id);
             return charges;
         }
+        [Authorize]
         [HttpPost]
         [Route("refund")]
         public async Task<dynamic> Refund(string id)
@@ -333,7 +340,7 @@ namespace PraksaProjektBackend.Controllers
                 return "Failed";
             }
         }
-
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet]
         [Route("getallrefunds")]
         public async Task<dynamic> GetAllRefunds()
@@ -341,7 +348,7 @@ namespace PraksaProjektBackend.Controllers
             var refund = await MakePayment.GetAllRefunds();
             return refund;
         }
-
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpGet]
         [Route("getrefund")]
         public async Task<dynamic> GetOneRefund(string id)

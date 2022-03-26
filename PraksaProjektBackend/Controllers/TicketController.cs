@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PraksaProjektBackend.Auth;
@@ -19,7 +20,7 @@ namespace PraksaProjektBackend.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
-
+        [Authorize]
         [HttpGet]
         [Route("getusersticket")]
         public async Task<ActionResult<IEnumerable<Ticket>>> GetUserTickets()
@@ -28,6 +29,7 @@ namespace PraksaProjektBackend.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.Hash)?.Value;
             return await _context.Ticket.Where(x => x.userId == userId).ToListAsync();
         }
+        [Authorize]
         [HttpGet]
         [Route("getticketqrcode")]
         public async Task<ActionResult<Ticket>> GetTicketQrCode(int id)

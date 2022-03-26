@@ -8,5 +8,7 @@ namespace PraksaProjektBackend.Services
         Task<UserManagerResponse> SendEmailAsync(ForgotPassword forgotPassword);
 
         Task<dynamic> SendQrEmailAsync(string chargeid, string usermail);
+
+        Task<dynamic> SendReservedQrEmailAsync(string eventname, string usermail);
     }
 }

@@ -86,6 +86,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpGet]
         [Route("loggeduser")]
+        [Authorize]
         public async Task<IActionResult> LoggedUser()
         {
             try
@@ -115,6 +116,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpGet]
         [Route("logout")]
+        [Authorize]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("token", new CookieOptions()
@@ -306,7 +308,7 @@ namespace PraksaProjektBackend.Controllers
         //    return user;
         //}
 
-
+        [Authorize]
         [HttpGet]
         [Route("editaccount")]
         public IActionResult EditAccount()
