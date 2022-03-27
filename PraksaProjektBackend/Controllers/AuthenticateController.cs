@@ -40,16 +40,6 @@ namespace PraksaProjektBackend.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            if (claimsIdentity == null)
-            {
-                return NotFound();
-            }
-            var userId = claimsIdentity.FindFirst(ClaimTypes.Hash)?.Value;
-            if (userId != null)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "You are logged in" });
-            }
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
@@ -183,16 +173,6 @@ namespace PraksaProjektBackend.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            if (claimsIdentity == null)
-            {
-                return NotFound();
-            }
-            var userId = claimsIdentity.FindFirst(ClaimTypes.Hash)?.Value;
-            if (userId != null)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "You are logged in" });
-            }
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
