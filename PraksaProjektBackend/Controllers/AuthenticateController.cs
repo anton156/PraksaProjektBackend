@@ -76,7 +76,6 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpGet]
         [Route("loggeduser")]
-        [Authorize]
         public async Task<IActionResult> LoggedUser()
         {
             try
@@ -104,7 +103,7 @@ namespace PraksaProjektBackend.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("logout")]
         [Authorize]
         public IActionResult Logout()
