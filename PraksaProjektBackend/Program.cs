@@ -10,6 +10,7 @@ using PraksaProjektBackend.Services;
 using System.Text.Json.Serialization;
 using PraksaProjektBackend.Filter;
 using Microsoft.AspNetCore.OData;
+using PraksaProjektBackend.ExternalLogin;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -32,14 +33,11 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-//    .AddGoogle(options =>
-//{
-//    IConfigurationSection googleAuthNSection =
-//    configuration.GetSection("Authentication:Google");
-//    options.ClientId = googleAuthNSection["ClientId"];
-//    options.ClientSecret = googleAuthNSection["ClientSecret"];
-//    options.SignInScheme = IdentityConstants.ExternalScheme;
-//})
+    .AddGoogle(options =>
+{
+    options.ClientId = "288980946101-tgetchqvivq91tmo12u9d592eea85b5n.apps.googleusercontent.com";
+    options.ClientSecret = "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";
+})
 
 // Adding Jwt Bearer
 .AddJwtBearer(options =>
@@ -73,6 +71,8 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddScoped<JwtHandler>();
 
 builder.Services.AddCors(options =>
 {

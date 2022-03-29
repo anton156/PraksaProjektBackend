@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using PraksaProjektBackend.Services;
 using PraksaProjektBackend.Models;
+using PraksaProjektBackend.ExternalLogin;
 
 namespace PraksaProjektBackend.Controllers
 {
@@ -22,18 +23,20 @@ namespace PraksaProjektBackend.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly IMailService _mailService;
+        private readonly JwtHandler _jwtHandler;
 
         public AuthenticateController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration,IMailService mailService)
+            IConfiguration configuration,IMailService mailService, JwtHandler jwtHandler)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _signInManager = signInManager;
             _mailService = mailService;
+            _jwtHandler = jwtHandler;
         }
 
         [HttpPost]
@@ -572,6 +575,37 @@ namespace PraksaProjektBackend.Controllers
                 );
 
             return token;
+        }
+
+        [HttpPost("ExternalLogin")]
+        public async Task<IActionResult> ExternalLogin([FromBody] ExternalAuthDto externalAuth)
+        {
+            var payload = await _jwtHandler.VerifyGoogleToken(externalAuth);
+            if (payload == null)
+                return BadRequest("Invalid External Authentication.");
+            var info = new UserLoginInfo(externalAuth.Provider, payload.Subject, externalAuth.Provider);
+            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (user == null)
+            {
+                user = await _userManager.FindByEmailAsync(payload.Email);
+                if (user == null)
+                {
+                    user = new ApplicationUser { Email = payload.Email, UserName = payload.Email };
+                    await _userManager.CreateAsync(user);
+                    //prepare and send an email for the email confirmation
+                    await _userManager.AddToRoleAsync(user, "Customer");
+                    await _userManager.AddLoginAsync(user, info);
+                }
+                else
+                {
+                    await _userManager.AddLoginAsync(user, info);
+                }
+            }
+            if (user == null)
+                return BadRequest("Invalid External Authentication.");
+            //check for the Locked out account
+            var token = await _jwtHandler.GenerateToken(user);
+            return Ok(new AuthResponseDto { Token = token, IsAuthSuccessful = true });
         }
     }
 }
