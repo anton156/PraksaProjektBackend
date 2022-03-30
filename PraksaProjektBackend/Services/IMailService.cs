@@ -10,5 +10,7 @@ namespace PraksaProjektBackend.Services
         Task<dynamic> SendQrEmailAsync(string chargeid, string usermail);
 
         Task<dynamic> SendReservedQrEmailAsync(string eventname, string usermail);
+
+        Task<dynamic> SendNewsletter(string subject, string body, string usermail);
     }
 }

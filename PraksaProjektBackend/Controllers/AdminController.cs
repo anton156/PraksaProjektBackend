@@ -44,6 +44,7 @@ namespace PraksaProjektBackend.Controllers
         public IActionResult ListOrganizer()
         {
             var users = _userManager.GetUsersInRoleAsync("Organizer").Result;
+            
             return Ok(users);
         }
         [HttpGet]
@@ -58,6 +59,43 @@ namespace PraksaProjektBackend.Controllers
         public async Task <dynamic> SendReservation(string eventname, string email)
         {
             return await _mailService.SendReservedQrEmailAsync(eventname, email);
+        }
+        [HttpGet]
+        [Route("sendnewslettertoallusers")]
+        public async Task<dynamic> SendNewsletterToAll(string subject, string body)
+        {
+            try
+            {
+                var users = _userManager.Users;
+                foreach (var user in users)
+                {
+                    await _mailService.SendNewsletter(subject, body, user.Email);
+                }
+                return "Mails sent";
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("sendmailtoallorganizers")]
+        public async Task<dynamic> SendMailToOrganizers(string subject, string body)
+        {
+            try
+            {
+                var users = _userManager.GetUsersInRoleAsync("Organizer").Result;
+                foreach (var user in users)
+                {
+                    await _mailService.SendNewsletter(subject, body, user.Email);
+                }
+                return "Mails sent";
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

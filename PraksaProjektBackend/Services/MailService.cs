@@ -108,5 +108,28 @@ namespace PraksaProjektBackend.Services
 
             return "Success";
         }
+
+        public async Task<dynamic> SendNewsletter(string subject, string body, string usermail)
+        {
+
+            var email = new MimeMessage();
+            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+            email.To.Add(MailboxAddress.Parse(usermail));
+            email.Subject = subject;
+
+            var builder = new BodyBuilder();
+            
+            builder.HtmlBody = "<html><body> <p>" + body + "</p> </body></html>"; 
+
+            email.Body = builder.ToMessageBody();
+            using var smtp = new SmtpClient();
+            smtp.CheckCertificateRevocation = false;
+            smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+            await smtp.SendAsync(email);
+            smtp.Disconnect(true);
+
+            return "Success";
+        }
     }
 }
