@@ -33,7 +33,10 @@ namespace PraksaProjektBackend.ExternalLogin
 		{
 			var claims = new List<Claim>
 			{
-				new Claim(ClaimTypes.Name, user.Email)
+				  new Claim(ClaimTypes.Email, user.Email),
+					new Claim(ClaimTypes.NameIdentifier, user.UserName),
+					new Claim(ClaimTypes.Hash, user.Id),
+					new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 			};
 
 			var roles = await _userManager.GetRolesAsync(user);

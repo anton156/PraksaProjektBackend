@@ -97,6 +97,24 @@ namespace PraksaProjektBackend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet]
+        [Route("sendmailtoticketholders")]
+        public async Task<dynamic> SendMailToTicketHolders(int eventid, string subject, string body)
+        {
+            try
+            {
+                var users = _dbContext.Ticket.Where(x => x.eventId == eventid).ToList();
+                foreach (var user in users)
+                {
+                    await _mailService.SendNewsletter(subject, body, user.userEmail);
+                }
+                return "Mails sent";
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }
