@@ -107,7 +107,7 @@ namespace PraksaProjektBackend.Controllers
             if (currentevents.EventImage.Length > 0)
             {
                 string imgext = Path.GetExtension(currentevents.EventImage.FileName);
-                if (imgext == ".jpg" || imgext == ".png")
+                if (imgext == ".jpg" || imgext == ".png" || imgext ==".jpeg")
                 {
                     try
                     {
