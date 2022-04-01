@@ -11,6 +11,7 @@ using System.Text.Json.Serialization;
 using PraksaProjektBackend.Filter;
 using Microsoft.AspNetCore.OData;
 using PraksaProjektBackend.ExternalLogin;
+using PraksaProjektBackend.ExternalLogin.Facebook;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -73,6 +74,9 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<JwtHandler>();
+
+//builder.Services.AddHttpClient();
+//builder.Services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
 
 builder.Services.AddCors(options =>
 {

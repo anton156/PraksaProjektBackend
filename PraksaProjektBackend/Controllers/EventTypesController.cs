@@ -28,6 +28,7 @@ namespace PraksaProjektBackend.Controllers
         // GET: api/EventTypes
         [HttpGet]
         [EnableQuery]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<EventType>>> GetEventType()
         {
             return await _context.EventType.ToListAsync();
@@ -35,6 +36,7 @@ namespace PraksaProjektBackend.Controllers
 
         // GET: api/EventTypes/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<EventType>> GetEventType(int id)
         {
             var eventType = await _context.EventType.FindAsync(id);
