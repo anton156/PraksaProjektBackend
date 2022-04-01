@@ -111,7 +111,7 @@ namespace PraksaProjektBackend.Controllers
             _context.Post.Remove(post);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new Response { Status = "Success", Message = "Post deleted" });
         }
 
         private bool PostExists(int id)

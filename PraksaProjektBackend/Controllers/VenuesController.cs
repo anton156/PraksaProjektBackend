@@ -144,7 +144,7 @@ namespace PraksaProjektBackend.Controllers
             _context.Venue.Remove(venue);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+           return Ok(new Response { Status = "Success", Message = "Venue deleted" });
         }
 
         private bool VenueExists(int id)

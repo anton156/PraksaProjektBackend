@@ -75,8 +75,12 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<JwtHandler>();
 
-//builder.Services.AddHttpClient();
-//builder.Services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
+//Facebook login
+var facebookAuthSettings = new FacebookAuthSettings();
+configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
+builder.Services.AddSingleton(facebookAuthSettings);
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
 
 builder.Services.AddCors(options =>
 {

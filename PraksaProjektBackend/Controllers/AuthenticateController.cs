@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using PraksaProjektBackend.Services;
 using PraksaProjektBackend.Models;
 using PraksaProjektBackend.ExternalLogin;
+using PraksaProjektBackend.ExternalLogin.Facebook;
 
 namespace PraksaProjektBackend.Controllers
 {
@@ -24,12 +25,13 @@ namespace PraksaProjektBackend.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMailService _mailService;
         private readonly JwtHandler _jwtHandler;
+        private readonly IFacebookAuthService _facebookAuthService;
 
         public AuthenticateController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration,IMailService mailService, JwtHandler jwtHandler)
+            IConfiguration configuration,IMailService mailService, JwtHandler jwtHandler, IFacebookAuthService facebookAuthService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -37,6 +39,7 @@ namespace PraksaProjektBackend.Controllers
             _signInManager = signInManager;
             _mailService = mailService;
             _jwtHandler = jwtHandler;
+            _facebookAuthService = facebookAuthService;
         }
 
         [HttpPost]
@@ -601,6 +604,37 @@ namespace PraksaProjektBackend.Controllers
                     await _userManager.AddLoginAsync(user, info);
                 }
             }
+            if (user == null)
+                return BadRequest("Invalid External Authentication.");
+            //check for the Locked out account
+            var token = await _jwtHandler.GenerateToken(user);
+            return Ok(new AuthResponseDto { Token = token, IsAuthSuccessful = true });
+        }
+
+        [HttpPost("ExternalLoginFacebook")]
+        public async Task<IActionResult> ExternalLoginFacebook([FromBody] ExternalAuthDto externalAuth)
+        {
+            var validateTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(externalAuth.IdToken);
+            if (!validateTokenResult.Data.IsValid)
+            {
+                return BadRequest("Invalid External Authentication.");
+            }
+            var payload = await _facebookAuthService.GetUserInfoAsync(externalAuth.IdToken);
+            var info = new UserLoginInfo(externalAuth.Provider, payload.Id, externalAuth.Provider);
+            var user = await _userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+                {
+                    user = new ApplicationUser { Email = payload.Email, UserName = payload.Email };
+                    await _userManager.CreateAsync(user);
+                    //prepare and send an email for the email confirmation
+                    await _userManager.AddToRoleAsync(user, "Customer");
+                    await _userManager.AddLoginAsync(user, info);
+                }
+            else
+                {
+                    await _userManager.AddLoginAsync(user, info);
+                }
+            
             if (user == null)
                 return BadRequest("Invalid External Authentication.");
             //check for the Locked out account

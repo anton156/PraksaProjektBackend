@@ -75,7 +75,7 @@ namespace PraksaProjektBackend.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(city);
         }
 
         // POST: api/Cities
@@ -102,7 +102,7 @@ namespace PraksaProjektBackend.Controllers
             _context.City.Remove(city);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new Response { Status = "Success", Message = "City deleted" });
         }
 
         private bool CityExists(int id)

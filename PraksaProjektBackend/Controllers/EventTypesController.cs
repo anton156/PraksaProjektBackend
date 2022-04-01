@@ -77,7 +77,7 @@ namespace PraksaProjektBackend.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(eventType);
         }
 
         // POST: api/EventTypes
@@ -104,7 +104,7 @@ namespace PraksaProjektBackend.Controllers
             _context.EventType.Remove(eventType);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new Response { Status = "Success", Message = "Event Type deleted" });
         }
 
         private bool EventTypeExists(int id)
