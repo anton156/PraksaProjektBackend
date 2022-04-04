@@ -141,6 +141,10 @@ namespace PraksaProjektBackend.Controllers
                             };
                             _context.CurrentEvent.Add(currentevent);
                             var venue = await _context.Venue.FindAsync(currentevent.VenueId);
+                            if(venue == null)
+                            {
+                                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Venue does not exist" });
+                            }
                             if (venue.Status == false)
                             {
                                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Venue not available" });
@@ -201,7 +205,7 @@ namespace PraksaProjektBackend.Controllers
             _context.CurrentEvent.Remove(currentevent);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new Response { Status = "Success", Message = "Current Event deleted" });
         }
 
         [Authorize(Roles = UserRoles.Admin)]
@@ -218,7 +222,7 @@ namespace PraksaProjektBackend.Controllers
             _context.CurrentEvent.RemoveRange(currentevent);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new Response { Status = "Success", Message = "Finished events deleted" });
         }
         [Authorize(Roles ="Admin, Organizer")]
         [HttpGet]

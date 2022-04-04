@@ -131,47 +131,6 @@ namespace PraksaProjektBackend.Controllers
         //await _signInManager.SignOutAsync();
         //  return Unauthorized();
         //}
-        //google login
-        //[Route("google-login")]
-        //public IActionResult GoogleLogin()
-        //{
-        //    string redirectUrl = Url.Action("GoogleResponse", "Account");
-        //    var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
-        //    return new ChallengeResult("Google", properties);
-        //}
-
-        //[Route("google-response")]
-        //public async Task<IActionResult> GoogleResponse()
-        //{
-        //    ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
-        //    if (info == null)
-        //        return RedirectToAction(nameof(Login));
-
-        //    var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
-        //    string[] userInfo = { info.Principal.FindFirst(ClaimTypes.Name).Value, info.Principal.FindFirst(ClaimTypes.Email).Value };
-        //    if (result.Succeeded)
-        //        return Ok(new Response { Status = "Success", Message = String.Join(",", userInfo) });
-        //    else
-        //    {
-        //        ApplicationUser user = new ApplicationUser
-        //        {
-        //            Email = info.Principal.FindFirst(ClaimTypes.Email).Value,
-        //            UserName = info.Principal.FindFirst(ClaimTypes.Email).Value
-        //        };
-
-        //        IdentityResult identResult = await _userManager.CreateAsync(user);
-        //        if (identResult.Succeeded)
-        //        {
-        //            identResult = await _userManager.AddLoginAsync(user, info);
-        //            if (identResult.Succeeded)
-        //            {
-        //                await _signInManager.SignInAsync(user, false);
-        //                return Ok(new Response { Status = "Success", Message = String.Join(",", userInfo) });
-        //            }
-        //        }
-        //        return Unauthorized();
-        //    }
-        //}
 
 
         [HttpPost]
@@ -265,33 +224,6 @@ namespace PraksaProjektBackend.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
-
-
-        //legacy edituser get
-        //[HttpGet]
-        //[Route("editaccount")]
-        //public async Task<ActionResult<ApplicationUser>> EditAccount(string id)
-        //{
-        //    var user = await _userManager.FindByIdAsync(id);
-
-        //    if (user == null)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not allowed" });
-        //    }
-
-        //    var model = new EditAccountModel
-        //    {
-        //        Id = user.Id,
-        //        Email = user.Email,
-        //        Firstname = user.FirstName,
-        //        Lastname = user.LastName,
-        //        Address = user.Address,
-        //        PhoneNumber = user.PhoneNumber,
-        //        Username = user.UserName
-        //    };
-
-        //    return user;
-        //}
 
         [Authorize]
         [HttpGet]

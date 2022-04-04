@@ -26,12 +26,14 @@ namespace PraksaProjektBackend.Controllers
         [HttpGet]
         [Route("getallposts")]
         [EnableQuery]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Post>>> GetPost()
         {
             return await _context.Post.ToListAsync();
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         
         public async Task<ActionResult<Post>> GetPost(int id)
         {
