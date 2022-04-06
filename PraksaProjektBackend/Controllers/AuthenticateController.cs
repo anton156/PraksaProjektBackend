@@ -540,6 +540,12 @@ namespace PraksaProjektBackend.Controllers
                 return BadRequest("Invalid External Authentication.");
             //check for the Locked out account
             var token = await _jwtHandler.GenerateToken(user);
+            Response.Cookies.Append("token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
             return Ok(new AuthResponseDto { Token = token, IsAuthSuccessful = true });
         }
 
@@ -566,11 +572,17 @@ namespace PraksaProjektBackend.Controllers
                 {
                     await _userManager.AddLoginAsync(user, info);
                 }
-            
+
             if (user == null)
                 return BadRequest("Invalid External Authentication.");
             //check for the Locked out account
             var token = await _jwtHandler.GenerateToken(user);
+            Response.Cookies.Append("token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
             return Ok(new AuthResponseDto { Token = token, IsAuthSuccessful = true });
         }
     }

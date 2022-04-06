@@ -36,8 +36,8 @@ builder.Services.AddAuthentication(options =>
 })
     .AddGoogle(options =>
 {
-    options.ClientId = "288980946101-tgetchqvivq91tmo12u9d592eea85b5n.apps.googleusercontent.com";
-    options.ClientSecret = "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";
+    options.ClientId = "115115841938-siocnn1d7h9cuvs209t0j1s3avnrmepm.apps.googleusercontent.com";
+    options.ClientSecret = "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";
 })
 
 // Adding Jwt Bearer
