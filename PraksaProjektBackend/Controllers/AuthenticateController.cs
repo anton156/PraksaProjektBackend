@@ -298,6 +298,7 @@ namespace PraksaProjektBackend.Controllers
                 if (id != accountid && role != UserRoles.Admin)
                     return Unauthorized(new { message = "Unauthorized" });
 
+                var logout = Logout();
                 var result = await _userManager.DeleteAsync(user);
                 if (!result.Succeeded)
                 {
