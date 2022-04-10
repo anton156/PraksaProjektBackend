@@ -12,6 +12,8 @@ using PraksaProjektBackend.Filter;
 using Microsoft.AspNetCore.OData;
 using PraksaProjektBackend.ExternalLogin;
 using PraksaProjektBackend.ExternalLogin.Facebook;
+using System.Net.Mail;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -74,7 +76,17 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<JwtHandler>();
-
+//fluentmail
+builder.Services
+        .AddFluentEmail("tttest203@gmail.com", "Dev")
+        .AddRazorRenderer()
+        .AddSmtpSender(new SmtpClient("smtp.gmail.com")
+        {
+            UseDefaultCredentials = false,
+            Port = 587,
+            Credentials = new NetworkCredential("tttest203@gmail.com", "Test123!"),
+            EnableSsl = true,
+        });
 //Facebook login
 var facebookAuthSettings = new FacebookAuthSettings();
 configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
