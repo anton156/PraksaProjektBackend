@@ -33,8 +33,8 @@ namespace PraksaProjektBackend.Services
             fileName = dirpath + "\\" + fileName;
 
             qrCodeImage.Save(fileName, System.Drawing.Imaging.ImageFormat.Jpeg);
-
-            return fileName;
+            var qrpath = "\\QRcode\\" + "QR_" + chargeid + ".jpg";
+            return qrpath;
         }
 
         public static async Task<dynamic> ReservedTicket(string eventname)
