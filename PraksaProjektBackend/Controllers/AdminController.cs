@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentEmail.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -62,14 +63,14 @@ namespace PraksaProjektBackend.Controllers
         }
         [HttpGet]
         [Route("sendnewslettertoallusers")]
-        public async Task<dynamic> SendNewsletterToAll(string subject, string body)
+        public async Task<dynamic> SendNewsletterToAll([FromServices] IFluentEmail mailer, string subject, string body)
         {
             try
             {
                 var users = _userManager.Users;
                 foreach (var user in users)
                 {
-                    await _mailService.SendNewsletter(subject, body, user.Email);
+                    await _mailService.SendNewsletter(mailer,subject, body, user.Email);
                 }
                 return "Mails sent";
             }
@@ -81,14 +82,14 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpGet]
         [Route("sendmailtoallorganizers")]
-        public async Task<dynamic> SendMailToOrganizers(string subject, string body)
+        public async Task<dynamic> SendMailToOrganizers([FromServices] IFluentEmail mailer,string subject, string body)
         {
             try
             {
                 var users = _userManager.GetUsersInRoleAsync("Organizer").Result;
                 foreach (var user in users)
                 {
-                    await _mailService.SendNewsletter(subject, body, user.Email);
+                    await _mailService.SendNewsletter(mailer,subject, body, user.Email);
                 }
                 return "Mails sent";
             }
@@ -99,14 +100,14 @@ namespace PraksaProjektBackend.Controllers
         }
         [HttpGet]
         [Route("sendmailtoticketholders")]
-        public async Task<dynamic> SendMailToTicketHolders(int eventid, string subject, string body)
+        public async Task<dynamic> SendMailToTicketHolders([FromServices] IFluentEmail mailer,int eventid, string subject, string body)
         {
             try
             {
                 var users = _dbContext.Ticket.Where(x => x.eventId == eventid).ToList();
                 foreach (var user in users)
                 {
-                    await _mailService.SendNewsletter(subject, body, user.userEmail);
+                    await _mailService.SendNewsletter(mailer,subject, body, user.userEmail);
                 }
                 return "Mails sent";
             }

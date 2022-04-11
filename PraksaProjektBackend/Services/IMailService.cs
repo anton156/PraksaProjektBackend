@@ -1,4 +1,5 @@
-﻿using PraksaProjektBackend.Auth;
+﻿using FluentEmail.Core;
+using PraksaProjektBackend.Auth;
 
 namespace PraksaProjektBackend.Services
 
@@ -11,6 +12,6 @@ namespace PraksaProjektBackend.Services
 
         Task<dynamic> SendReservedQrEmailAsync(string eventname, string usermail);
 
-        Task<dynamic> SendNewsletter(string subject, string body, string usermail);
+        Task<dynamic> SendNewsletter(IFluentEmail mailer,string subject, string body, string usermail);
     }
 }

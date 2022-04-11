@@ -5,7 +5,8 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Identity;
 using PraksaProjektBackend.Auth;
-
+using FluentEmail.Core;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PraksaProjektBackend.Services
 {
@@ -109,25 +110,31 @@ namespace PraksaProjektBackend.Services
             return "Success";
         }
 
-        public async Task<dynamic> SendNewsletter(string subject, string body, string usermail)
+        public async Task<dynamic> SendNewsletter(IFluentEmail mailer,string subject, string body, string usermail)
         {
+            //var email = new MimeMessage();
+            //email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+            //email.To.Add(MailboxAddress.Parse(usermail));
+            //email.Subject = subject;
 
-            var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
-            email.To.Add(MailboxAddress.Parse(usermail));
-            email.Subject = subject;
+            //var builder = new BodyBuilder();
 
-            var builder = new BodyBuilder();
-            
-            builder.HtmlBody = "<html><body> <p>" + body + "</p> </body></html>"; 
+            //builder.HtmlBody = "<html><body> <p>" + body + "</p> </body></html>"; 
 
-            email.Body = builder.ToMessageBody();
-            using var smtp = new SmtpClient();
-            smtp.CheckCertificateRevocation = false;
-            smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
-            await smtp.SendAsync(email);
-            smtp.Disconnect(true);
+            //email.Body = builder.ToMessageBody();
+            //using var smtp = new SmtpClient();
+            //smtp.CheckCertificateRevocation = false;
+            //smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+            //smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+            //await smtp.SendAsync(email);
+            //smtp.Disconnect(true);
+
+            var email = mailer
+                        .To(usermail)
+                        .Subject(subject)
+                        .Body(body);
+
+            await email.SendAsync();
 
             return "Success";
         }
