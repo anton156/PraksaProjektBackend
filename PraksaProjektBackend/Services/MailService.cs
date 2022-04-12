@@ -132,7 +132,13 @@ namespace PraksaProjektBackend.Services
             var email = mailer
                         .To(usermail)
                         .Subject(subject)
-                        .Body(body);
+                        .UsingTemplateFromFile($"{Directory.GetCurrentDirectory()}/wwwroot/TemplateEmail/TemplateEmail.cshtml",
+                    new
+                    {
+                        Subject = subject,
+                        Body = body,
+                    });
+            //.Body(body);
 
             await email.SendAsync();
 
