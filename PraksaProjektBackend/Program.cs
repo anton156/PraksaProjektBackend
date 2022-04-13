@@ -70,7 +70,7 @@ builder.Services.AddCors();
 
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
-    .AddOData(options => options.Select().Filter().OrderBy().Expand().Count().SkipToken());
+    .AddOData(options => options.Select().Filter().OrderBy().Expand().SetMaxTop(null).Count().SkipToken());
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
