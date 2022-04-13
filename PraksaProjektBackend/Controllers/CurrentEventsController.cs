@@ -253,15 +253,15 @@ namespace PraksaProjektBackend.Controllers
         [Authorize]
         [HttpPost]
         [Route("pay")]
-        public async Task<dynamic> Pay(Payment pm, int eventId, int quantity)
+        public async Task<dynamic> Pay([FromForm]Payment pm, int eventId, int quantity)
         {
             var currentevent = await _context.CurrentEvent.FindAsync(eventId);
             var pastevent = await _context.Event.FindAsync(eventId);
             if (currentevent != null && pastevent != null)
             {
-                if (currentevent.NumberOfSeats < quantity || currentevent == null || currentevent.Begin < DateTime.Now)
+                if (currentevent.NumberOfSeats < quantity || currentevent.Begin < DateTime.Now)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not enought seats" });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Not enought seats or event already started" });
                 }
                 pm.value = (int)(currentevent.Price * quantity * 100);
                 var result = await MakePayment.PayAsync(pm.cardnumber, pm.month, pm.year, pm.cvc, pm.value);

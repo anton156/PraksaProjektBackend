@@ -57,9 +57,9 @@ namespace PraksaProjektBackend.Controllers
         }
         [HttpGet]
         [Route("sendreservedticket")]
-        public async Task <dynamic> SendReservation(string eventname, string email)
+        public async Task <dynamic> SendReservation([FromServices] IFluentEmail mailer, string eventname, string email)
         {
-            return await _mailService.SendReservedQrEmailAsync(eventname, email);
+            return await _mailService.SendReservedQrEmailAsync(mailer,eventname, email);
         }
         [HttpGet]
         [Route("sendnewslettertoallusers")]
