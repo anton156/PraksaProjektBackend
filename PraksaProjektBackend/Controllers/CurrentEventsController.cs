@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentEmail.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -253,7 +254,7 @@ namespace PraksaProjektBackend.Controllers
         [Authorize]
         [HttpPost]
         [Route("pay")]
-        public async Task<dynamic> Pay([FromForm]Payment pm, int eventId, int quantity)
+        public async Task<dynamic> Pay([FromServices] IFluentEmail mailer,[FromForm]Payment pm, int eventId, int quantity)
         {
             var currentevent = await _context.CurrentEvent.FindAsync(eventId);
             var pastevent = await _context.Event.FindAsync(eventId);
@@ -287,7 +288,7 @@ namespace PraksaProjektBackend.Controllers
                         eventId = eventId,
                         start = currentevent.Begin,
                     };
-                    var emailsent = await _mailService.SendQrEmailAsync(result, userMail);
+                    var emailsent = await _mailService.SendQrEmailAsync(mailer,result, userMail);
                     _context.Ticket.Add(ticket);
                     await _context.SaveChangesAsync(); 
                     return "Success";
