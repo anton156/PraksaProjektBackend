@@ -15,7 +15,7 @@ namespace PraksaProjektBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = UserRoles.Admin)]
+    
     public class VenuesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -28,7 +28,7 @@ namespace PraksaProjektBackend.Controllers
         // GET: api/Venues
         [HttpGet]
         [EnableQuery]
-        [Authorize(Roles = "Organizer, Admin")]
+        [Authorize(Roles = "Admin, Organizer")]
         public async Task<ActionResult<IEnumerable<Venue>>> GetVenue()
         {
             return await _context.Venue.Include(x => x.City).ToListAsync();
@@ -36,7 +36,7 @@ namespace PraksaProjektBackend.Controllers
 
         // GET: api/Venues/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Organizer, Admin")]
+        [Authorize(Roles = "Admin, Organizer")]
         public async Task<ActionResult<Venue>> GetVenue(int id)
         {
             var venue = await _context.Venue.Include(x => x.City).FirstOrDefaultAsync(i => i.VenueId == id);
@@ -52,6 +52,7 @@ namespace PraksaProjektBackend.Controllers
         // PUT: api/Venues/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> PutVenue(int id, Venue venue)
         {
             if (id != venue.VenueId)
@@ -82,6 +83,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpPost]
         [Route("disablevenue")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<ActionResult> DisableVenue(int id)
         {
             var venue = await _context.Venue.FindAsync(id);
@@ -102,6 +104,7 @@ namespace PraksaProjektBackend.Controllers
 
         [HttpPost]
         [Route("enablevenue")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<ActionResult> EnableVenue(int id)
         {
             var venue = await _context.Venue.FindAsync(id);
@@ -123,6 +126,7 @@ namespace PraksaProjektBackend.Controllers
         // POST: api/Venues
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<ActionResult<Venue>> PostVenue(Venue venue)
         {
             _context.Venue.Add(venue);
@@ -133,6 +137,7 @@ namespace PraksaProjektBackend.Controllers
 
         // DELETE: api/Venues/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> DeleteVenue(int id)
         {
             var venue = await _context.Venue.FindAsync(id);
