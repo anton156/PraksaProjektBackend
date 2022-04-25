@@ -297,9 +297,13 @@ namespace PraksaProjektBackend.Controllers
                 // users can delete their own account and admins can delete any account
                 if (id != accountid && role != UserRoles.Admin)
                     return Unauthorized(new { message = "Unauthorized" });
-
-                var logout = Logout();
-                var result = await _userManager.DeleteAsync(user);
+                if(id == accountid)
+                {
+                    var logout = Logout();
+                }
+                    
+                    var result = await _userManager.DeleteAsync(user);
+                
                 if (!result.Succeeded)
                 {
                     var errors = new List<string>();
@@ -329,13 +333,15 @@ namespace PraksaProjektBackend.Controllers
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null)
             {
-                if (await _userManager.IsInRoleAsync(user, UserRoles.Customer)){
-                    await _userManager.RemoveFromRoleAsync(user, UserRoles.Customer);
-                    await _userManager.AddToRoleAsync(user, UserRoles.Organizer);                   
-                }
+                
                 if (await _userManager.IsInRoleAsync(user, UserRoles.Organizer))
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Already in the role" });
+                }
+                if (await _userManager.IsInRoleAsync(user, UserRoles.Customer))
+                {
+                    await _userManager.RemoveFromRoleAsync(user, UserRoles.Customer);
+                    await _userManager.AddToRoleAsync(user, UserRoles.Organizer);
                 }
                 if (await _userManager.IsInRoleAsync(user, UserRoles.Admin))
                 {
@@ -390,7 +396,10 @@ namespace PraksaProjektBackend.Controllers
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "User doesn't exist" });
             }
-
+            if(!await _userManager.CheckPasswordAsync(user, model.CurrentPassword))
+            {
+                return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "Current password incorrect" });
+            }
             if(string.Compare(model.NewPassword, model.ConfirmNewPassword)!=0)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "New password and confirm password does not match" });

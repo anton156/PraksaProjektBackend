@@ -79,14 +79,14 @@ namespace PraksaProjektBackend.Controllers
                             };
                             _context.Post.Add(post);
                             await _context.SaveChangesAsync();
-                            return Ok(post);
+                            return Ok(new Response { Status = "Success", Message = "Post created successfully" });
                         }
 
 
                     }
                     catch (Exception ex)
                     {
-                        return BadRequest(ex.Message);
+                        return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = ex.Message});
                     }
                 }
                 else

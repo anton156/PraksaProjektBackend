@@ -72,11 +72,11 @@ namespace PraksaProjektBackend.Controllers
                 {
                     await _mailService.SendNewsletter(mailer,subject, body, user.Email);
                 }
-                return "Mails sent";
+                return Ok(new Response { Status = "Success", Message = "Newsletter is successfully sent to all users" });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = ex.Message });
             }
         }
 
@@ -91,11 +91,11 @@ namespace PraksaProjektBackend.Controllers
                 {
                     await _mailService.SendNewsletter(mailer,subject, body, user.Email);
                 }
-                return "Mails sent";
+                return Ok(new Response { Status = "Success", Message = "Mail is successfully sent to all organizers" });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = ex.Message });
             }
         }
         [HttpGet]
@@ -109,11 +109,11 @@ namespace PraksaProjektBackend.Controllers
                 {
                     await _mailService.SendNewsletter(mailer,subject, body, user.userEmail);
                 }
-                return "Mails sent";
+                return Ok(new Response { Status = "Success", Message = "Mail is successfully sent to all ticket holders" });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = ex.Message });
             }
         }
 

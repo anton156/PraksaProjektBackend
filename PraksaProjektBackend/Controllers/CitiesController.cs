@@ -67,7 +67,7 @@ namespace PraksaProjektBackend.Controllers
             {
                 if (!CityExists(id))
                 {
-                    return NotFound();
+                    return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "City not found!" });
                 }
                 else
                 {
@@ -75,7 +75,7 @@ namespace PraksaProjektBackend.Controllers
                 }
             }
 
-            return Ok(city);
+            return Ok(new Response { Status = "Success", Message = "City updated successfully" });
         }
 
         // POST: api/Cities

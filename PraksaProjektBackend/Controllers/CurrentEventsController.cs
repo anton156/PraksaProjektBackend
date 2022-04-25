@@ -172,7 +172,7 @@ namespace PraksaProjektBackend.Controllers
                             };
                             _context.Event.Add(eventarh);
                             await _context.SaveChangesAsync();
-                            return Ok(currentevent);
+                            return Ok(new Response { Status = "Success", Message = "Event added successfully" });
                         }
 
 
@@ -333,7 +333,7 @@ namespace PraksaProjektBackend.Controllers
                     currentevent.NumberOfSeats = currentevent.NumberOfSeats + ticket.validUses;
                     arhevent.Profit = arhevent.Profit - ticket.price;
                     await _context.SaveChangesAsync();
-                    return "Success";
+                    return Ok(new Response { Status = "Success", Message = "Successfully made refund" });
                 }
                 else
                 {
@@ -342,7 +342,8 @@ namespace PraksaProjektBackend.Controllers
             }
             else
             {
-                return "Failed";
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Cant make refund for this ticket" });
+             
             }
         }
         [Authorize(Roles = UserRoles.Admin)]
