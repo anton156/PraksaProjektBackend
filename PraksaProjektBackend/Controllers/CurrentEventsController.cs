@@ -228,6 +228,7 @@ namespace PraksaProjektBackend.Controllers
         [Authorize(Roles ="Admin, Organizer")]
         [HttpGet]
         [Route("getavailablevenues")]
+        [EnableQuery]
         public async Task<ActionResult> GetAvailableVenues(DateTime begin, DateTime end)
         {
             var filter = await _context.CurrentEvent.Where(x => x.Begin < end && x.End > begin).Select(x => x.VenueId).Distinct().ToListAsync();
