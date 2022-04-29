@@ -27,7 +27,7 @@ namespace PraksaProjektBackend.Controllers
         {
             var claimsIdentity = this.User.Identity as ClaimsIdentity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.Hash)?.Value;
-            return await _context.Ticket.Where(x => x.userId == userId).ToListAsync();
+            return await _context.Ticket.Where(x => x.userId == userId).Include(s => s.CurrentEvent).ToListAsync();
         }
         [Authorize]
         [HttpGet]
