@@ -288,6 +288,7 @@ namespace PraksaProjektBackend.Controllers
                         price = pm.value,
                         eventId = eventId,
                         start = currentevent.Begin,
+                        CurrentEvent=currentevent,
                     };
                     var emailsent = await _mailService.SendQrEmailAsync(mailer,result, userMail);
                     _context.Ticket.Add(ticket);
